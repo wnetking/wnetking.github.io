@@ -1,0 +1,41 @@
+.main-info {
+    display: flex;
+    max-width: 980px;
+    margin: auto;
+
+    .my-photo {
+        flex-basis: 30%;
+        overflow: hidden;
+        text-align: center;
+
+        img {
+            max-width: 200px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+        }
+    }
+
+    .description {
+        flex-basis: 70%;
+        padding: 20px;
+        font-size: 1.5em;
+        font-weight: normal;
+
+        .name {
+            margin-bottom: 0px;
+            color: $buttonColor;
+        }
+
+        .specification {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        .button-block{
+          margin-top: 2em;
+          text-align: center;
+        }
+        .hire-me-button{
+          color: $veryDarkPurple;
+        }
+    }
+}

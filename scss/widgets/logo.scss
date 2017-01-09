@@ -1,0 +1,52 @@
+.logo {
+    position: relative;
+    margin-right: 10vw;
+    font-family: 'Pacifico', cursive;
+    font-size: 30px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: $textColor;
+
+    ul {
+        padding: 0;
+        margin: 0;
+        font-size: 18px;
+
+        li {
+            margin: 0;
+            list-style: none;
+            line-height: 60px;
+        }
+    }
+
+    .visible {
+        font-weight: 600;
+        overflow: hidden;
+        height: 60px;
+        padding: 0 40px;
+    }
+
+    span {
+        display: inline;
+        float: left;
+        margin: 0;
+    }
+
+    ul {
+        margin-top: 0;
+        padding-left: 150px;
+        text-align: left;
+        list-style: none;
+        animation: 20s linear 0s normal none infinite change;
+        animation-delay: 3s;
+    }
+
+    &:after {
+        content: url(../fonts/svg/home.svg);
+        position: absolute;
+        top: 0;
+        right: -5vw;
+        display: block;
+        width: 50px;
+    }
+}

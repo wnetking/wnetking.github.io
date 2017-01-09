@@ -1,1 +1,258 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pesronal Site</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link href="libs/jquery.fullpage.min.css" type="text/css" rel="stylesheet"/>
+	<link href="css/index.css" type="text/css" rel="stylesheet"/>
+	<!--[if IE]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<header class="content">
+			<nav class="device">
+				<div class="device__screen">
+					<div id="menu-icon-wrapper" class="menu-icon-wrapper" style="visibility: hidden">
+						<svg width="1000px" height="1000px">
+							<path id="pathA" d="M 300 400 L 700 400 C 900 400 900 750 600 850 A 400 400 0 0 1 200 200 L 800 800"></path>
+							<path id="pathB" d="M 300 500 L 700 500"></path>
+							<path id="pathC" d="M 700 600 L 300 600 C 100 600 100 200 400 150 A 400 380 0 1 1 200 800 L 800 200"></path>
+						</svg>
+						<button id="menu-icon-trigger" class="menu-icon-trigger"></button>
+					</div><!-- menu-icon-wrapper -->
+					<ul id="dummy" class="dummy">
+						<!-- <li class="dummy__item"><a href="#">Main</a></li> -->
+						<li class="dummy__item my-works"><a href="#">My works</a></li>
+						<li class="dummy__item cool-things"><a href="#">Cool things</a></li>
+						<li class="dummy__item about"><a href="#">About Me</a></li>
+					</ul><!-- /dummy -->
+				</div><!-- /device-content -->
+			</nav><!-- /device -->
+			<div class="logo">
+				<a href="#"><h3 style="margin:0px;">welcome</h3></a>
+			</div>
+	</header>
+	<main class="slider" id="fullpage">
+    <div class="section">
+      <div class="main">
+        <h2 class="main-slogan">Let me ...</h2>
+    		<section class="animation-block">
+    			<div class="svg">
+    				<img src="fonts/svg/side-menu.svg" alt="animation-block">
+    			</div>
+    			<h3>Create</h3>
+    		</section>
+    		<section class="animation-block">
+    			<div class="svg">
+    				<img src="fonts/svg/browser-visualization.svg" alt="animation-block">
+    			</div>
+    			<h3>Change</h3>
+    		</section>
+    		<section class="animation-block">
+    			<div class="svg">
+    				<img src="fonts/svg/picture.svg" alt="animation-block">
+    			</div>
+    			<h3>Costomize</h3>
+    		</section>
+    		<h2 class="main-slogan">Your site !  <a href="#" class="learn-more"> More about that</a></h2>
+      </div>
+    </div>
+
+    <div class="section  background-1">
+      <div class="main-info">
+  			<div class="my-photo">
+  				<img src="img/my-photo.jpg" alt="My photo">
+  			</div>
+  			<section class="description">
+  				<h2 class="name">Kyrylov Illya</h2>
+  				<h5 class="specification">Front-end developer</h5>
+  				<div class="info">
+  					<p>
+  						Hola! I am Kyrylov Illya front-end developer from Ukraine,
+  						If you have something to be done just call my name and I be there. ;-)
+  					</p>
+  				</div>
+          <div class="button-block">
+            <a href="#" class="hire-me-button hvr-shutter-in-horizontal">
+              <img src="fonts/svg/check-square.svg" alt="hire me" class="check-square"/>
+              Hire Me
+            </a>
+          </div>
+  			</section>
+      </div>
+    </div>
+
+    <div class="section background-2">
+      <div class="my-skills">
+        <h1 class="title center">My skills</h1>
+        <div class="skill">
+          <div class="logo-of-skill">
+            <img src="img/svg/html.svg" alt="skill" class="img-logo"/>
+          </div>
+          <div class="level-progres">
+            <div class="progress-wrap progress html" data-progress-percent="90">
+              <div class="progress-bar progress"></div>
+            </div>
+            <span class="name-of-skill">html</span>
+            <span class="level-of-skill">0%</span>
+          </div>
+        </div>
+        <div class="skill">
+          <div class="logo-of-skill ">
+            <img src="img/svg/css-3.svg" alt="skill" class="img-logo"/>
+          </div>
+          <div class="level-progres">
+            <div class="progress-wrap progress css" data-progress-percent="95">
+              <div class="progress-bar progress"></div>
+            </div>
+            <span class="name-of-skill">css</span>
+            <span class="level-of-skill">0%</span>
+          </div>
+        </div>
+        <div class="skill">
+          <div class="logo-of-skill ">
+            <img src="img/svg/java-script-logo.svg" alt="skill" class="img-logo"/>
+          </div>
+          <div class="level-progres">
+            <div class="progress-wrap progress js" data-progress-percent="70">
+              <div class="progress-bar progress"></div>
+            </div>
+            <span class="name-of-skill">javaScript</span>
+            <span class="level-of-skill">0%</span>
+          </div>
+        </div>
+        <div class="skill">
+          <div class="logo-of-skill ">
+            <img src="img/svg/jquery-sketch-symbol.svg" alt="skill" class="img-logo"/>
+          </div>
+          <div class="level-progres">
+            <div class="progress-wrap progress jquery" data-progress-percent="75">
+              <div class="progress-bar progress"></div>
+            </div>
+            <span class="name-of-skill">jquery</span>
+            <span class="level-of-skill">0%</span>
+          </div>
+        </div>
+        <div class="skill">
+          <div class="logo-of-skill ">
+            <img src="img/svg/php-programming-language.svg" alt="skill" class="img-logo"/>
+          </div>
+          <div class="level-progres">
+            <div class="progress-wrap progress php" data-progress-percent="50">
+              <div class="progress-bar progress"></div>
+            </div>
+            <span class="name-of-skill">php</span>
+            <span class="level-of-skill">0%</span>
+          </div>
+        </div>
+        <div class="skill other-skills">
+          <div class="logo-of-skill">
+            <h3>Other</h3>
+          </div>
+          <div class="level-progres">
+            <ul>
+              <li class="hvr-float-shadow">scss</li>
+              <li class="hvr-float-shadow">compass</li>
+              <li class="hvr-float-shadow">gulp</li>
+              <li class="hvr-float-shadow">bootstrap</li>
+              <li class="hvr-float-shadow"><i class="fa fa-git" aria-hidden="true"></i></li>
+              <li class="hvr-float-shadow"><i class="fa fa-bitbucket" aria-hidden="true"></i></li>
+              <li class="hvr-float-shadow"><i class="fa fa-github" aria-hidden="true"></i></li>
+              <li class="hvr-float-shadow"><i class="fa fa-google" aria-hidden="true"></i></li>
+              <li class="hvr-float-shadow"><i class="fa fa-opencart" aria-hidden="true"></i></li>
+              <li class="hvr-float-shadow"><i class="fa fa-wordpress" aria-hidden="true"></i></li>
+              <li class="hvr-float-shadow"><i class="fa fa-joomla" aria-hidden="true"></i></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section background-3">
+      <section class="my-works">
+        <h1 class="titel center">My works</h1>
+        <div class="description">
+          You can see my works in a special section with a detailed description of the work,
+          also you can visit the section with cool things,
+          let what you see there will be a surprise for you ...
+        </div>
+        <div class="button-block">
+          <a href="#" class="hire-me-button hvr-shutter-in-horizontal">
+            <img src="fonts/svg/picture.svg" alt="icon"  class="check-square"/>
+            See my works
+          </a>
+          <a href="#" class="hire-me-button hvr-shutter-in-horizontal">
+            <img src="fonts/svg/spider-web.svg" alt="icon"  class="check-square"/>
+            Cool things
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <div class="section background-4">
+      <section class="my-resume">
+        <h1 class="titel center">My resume</h1>
+        <div class="description">
+          You can download my resume for your references,
+          and I hope that we can meet very soon ;-)
+        </div>
+        <div class="button-block">
+          <a href="#" class="hire-me-button hvr-shutter-in-horizontal">
+            <img src="fonts/svg/note.svg" alt="icon"  class="check-square"/>
+            Download
+          </a>
+        </div>
+      </section>
+    </div>
+
+      <div class="section background-5  bg-video">
+        <section class="thanks">
+          <a id="bgndVideo"
+             class="player"
+             data-property="{videoURL:'http://www.youtube.com/watch?v=dFyes1qzwss',
+                             containment:'.bg-video',
+                             autoPlay:false,
+                             mute:true,
+                             startAt:0,
+                             opacity:1,
+                             showYTLogo: false,
+                             showControls: false,
+                             gaTrack: false,
+                             }">
+          </a>
+          <h1 class="titel center">Follow me on ...</h1>
+          <div class="description">
+            <ul>
+              <li><a href="#" target="_blank" class="hvr-float-shadow"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+              <li><a href="#" target="_blank" class="hvr-float-shadow"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+              <li><a href="#" target="_blank" class="hvr-float-shadow"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+              <li><a href="#" target="_blank" class="hvr-float-shadow"><i class="fa fa-vk" aria-hidden="true"></i></a></li>
+              <li><a href="#" target="_blank" class="hvr-float-shadow"><i class="fa fa-github" aria-hidden="true"></i></a></li>
+              <li><a href="#" target="_blank" class="hvr-float-shadow"><i class="fa fa-bitbucket" aria-hidden="true"></i></a></li>
+            </ul>
+          </div>
+          <div class="button-block">
+            <h2>Thanks! ;-)</h2>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+	<footer>
+		<span class="copirate">copirate</span>
+		<a class="contact" href="#">contact</a>
+	</footer>
+	<script type="text/javascript" src="js/jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="js/segment.min.js"></script>
+	<script type="text/javascript" src="js/ease.min.js"></script>
+	<script type="text/javascript" src="libs/jquery.fullpage.min.js"></script>
+	<script type="text/javascript" src="libs/device.min.js"></script>
+	<script type="text/javascript" src="libs/jquery.mb.YTPlayer.min.js"></script>
+	<script type="text/javascript" src="libs/jquery.animateNumber.min.js"></script>
+	<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

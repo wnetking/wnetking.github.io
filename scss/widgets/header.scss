@@ -1,0 +1,16 @@
+header {
+    position:fixed;
+    display: flex;
+    width: 100%;
+    background-color: $darkPurple;
+    padding: 0 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    justify-content: space-between;
+    align-items: center;
+
+    will-change: top, bottom;
+    transition: all .8s ease-in-out;
+
+}

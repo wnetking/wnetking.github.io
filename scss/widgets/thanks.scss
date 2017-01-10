@@ -1,0 +1,15 @@
+.thanks{
+  @extend .my-works;
+
+  .description{
+    text-align: center;
+
+    li{
+      display: inline-block;
+
+      a{
+        padding: 1em;
+      }
+    }
+  }
+}

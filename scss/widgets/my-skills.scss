@@ -1,0 +1,87 @@
+.my-skills{
+  width: 80%;
+  margin: auto;
+
+
+  .other-skills{
+    li{
+      display: inline-block;
+      padding-right: 10px;
+      cursor: pointer;
+    }
+  }
+
+  .skill{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+
+    .logo-of-skill{
+      flex-basis: 20%;
+      text-align: center;
+
+      .img-logo{
+        max-width:50px;
+      }
+    }
+
+    .progress {
+      width: 100%;
+      height: 5px;
+
+    }
+
+    .level-progres{
+      position: relative;
+      flex-basis: 80%;
+
+      .name-of-skill, .level-of-skill{
+        position: absolute;
+        display: inline-block;
+        top: -5px;
+      }
+      .name-of-skill{
+        left: 0px;
+      }
+      .level-of-skill{
+        right: 0px;
+      }
+    }
+    .progress-wrap {
+      position: relative;
+      overflow-x: hidden;
+      width:100%;
+      background: #f80;
+      margin: 20px 0;
+      border-radius: 5px;
+
+      .progress-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #ddd;
+      }
+
+
+      &.html{
+        background: #e52;
+      }
+      &.css{
+        background: #17b;
+      }
+      &.js{
+        background:  #fe2;
+      }
+      &.php{
+        background: #68c;
+      }
+      &.jquery{
+        background: #f80;
+      }
+    }
+  }
+}

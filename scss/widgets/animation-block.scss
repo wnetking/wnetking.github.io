@@ -1,0 +1,19 @@
+.animation-block {
+    width: 15vw;
+    height: 15vw;
+    margin: 2vw;
+    background-color: $darkPurple;
+    border: 1px solid $darkPurple;
+    border-radius: 3px;
+    text-align: center;
+
+    .svg {
+        display: inline-block;
+        width: 10vw;
+        margin-top: 5%;
+    }
+
+    h3 {
+        margin: 5px;
+    }
+}

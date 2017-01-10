@@ -1,0 +1,248 @@
+{
+  "checksum": {
+    "previous": "5fc8069a25013cd981a3384e7bbafb89ff44b5dc7e089df9a723cb7170af5ca8",
+    "current": "5fc8069a25013cd981a3384e7bbafb89ff44b5dc7e089df9a723cb7170af5ca8"
+  },
+  "fonts": [
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/Flaticon.ttf",
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/Flaticon.svg",
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/Flaticon.woff",
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/Flaticon.eot"
+  ],
+  "glyphs": {
+    "add-button": {
+      "codepoint": 61696,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/add-button.svg"
+    },
+    "apps": {
+      "codepoint": 61697,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/apps.svg"
+    },
+    "at": {
+      "codepoint": 61698,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/at.svg"
+    },
+    "bookmark": {
+      "codepoint": 61699,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/bookmark.svg"
+    },
+    "browser": {
+      "codepoint": 61700,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/browser.svg"
+    },
+    "browser-visualization": {
+      "codepoint": 61701,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/browser-visualization.svg"
+    },
+    "check-square": {
+      "codepoint": 61702,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/check-square.svg"
+    },
+    "chrome-logo": {
+      "codepoint": 61703,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/chrome-logo.svg"
+    },
+    "close": {
+      "codepoint": 61704,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/close.svg"
+    },
+    "compass": {
+      "codepoint": 61705,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/compass.svg"
+    },
+    "compass-1": {
+      "codepoint": 61706,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/compass-1.svg"
+    },
+    "compass-2": {
+      "codepoint": 61707,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/compass-2.svg"
+    },
+    "compass-3": {
+      "codepoint": 61708,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/compass-3.svg"
+    },
+    "connections": {
+      "codepoint": 61709,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/connections.svg"
+    },
+    "diagonal-enlarge": {
+      "codepoint": 61710,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/diagonal-enlarge.svg"
+    },
+    "download": {
+      "codepoint": 61711,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/download.svg"
+    },
+    "downloading-from-smartphone": {
+      "codepoint": 61712,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/downloading-from-smartphone.svg"
+    },
+    "favorites-button": {
+      "codepoint": 61713,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/favorites-button.svg"
+    },
+    "folders": {
+      "codepoint": 61714,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/folders.svg"
+    },
+    "glasses": {
+      "codepoint": 61715,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/glasses.svg"
+    },
+    "high-volume": {
+      "codepoint": 61716,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/high-volume.svg"
+    },
+    "history-button": {
+      "codepoint": 61717,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/history-button.svg"
+    },
+    "home": {
+      "codepoint": 61718,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/home.svg"
+    },
+    "menu-button": {
+      "codepoint": 61719,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/menu-button.svg"
+    },
+    "microphone": {
+      "codepoint": 61720,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/microphone.svg"
+    },
+    "mouse": {
+      "codepoint": 61721,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/mouse.svg"
+    },
+    "multi-tab": {
+      "codepoint": 61722,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/multi-tab.svg"
+    },
+    "mute": {
+      "codepoint": 61723,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/mute.svg"
+    },
+    "new-file": {
+      "codepoint": 61724,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/new-file.svg"
+    },
+    "next-page": {
+      "codepoint": 61725,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/next-page.svg"
+    },
+    "note": {
+      "codepoint": 61726,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/note.svg"
+    },
+    "notification": {
+      "codepoint": 61727,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/notification.svg"
+    },
+    "open-book": {
+      "codepoint": 61728,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/open-book.svg"
+    },
+    "order": {
+      "codepoint": 61729,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/order.svg"
+    },
+    "padlock": {
+      "codepoint": 61730,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/padlock.svg"
+    },
+    "picture": {
+      "codepoint": 61731,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/picture.svg"
+    },
+    "pin": {
+      "codepoint": 61732,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/pin.svg"
+    },
+    "play-button": {
+      "codepoint": 61733,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/play-button.svg"
+    },
+    "play-button-1": {
+      "codepoint": 61734,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/play-button-1.svg"
+    },
+    "refresh-button": {
+      "codepoint": 61735,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/refresh-button.svg"
+    },
+    "retweet": {
+      "codepoint": 61736,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/retweet.svg"
+    },
+    "settings": {
+      "codepoint": 61737,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/settings.svg"
+    },
+    "shop": {
+      "codepoint": 61738,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/shop.svg"
+    },
+    "side-menu": {
+      "codepoint": 61739,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/side-menu.svg"
+    },
+    "spider-web": {
+      "codepoint": 61740,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/spider-web.svg"
+    },
+    "tracker": {
+      "codepoint": 61741,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/tracker.svg"
+    },
+    "turn-right": {
+      "codepoint": 61742,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/turn-right.svg"
+    },
+    "upload-arrow": {
+      "codepoint": 61743,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/upload-arrow.svg"
+    },
+    "upload-to-cloud": {
+      "codepoint": 61744,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/upload-to-cloud.svg"
+    },
+    "user": {
+      "codepoint": 61745,
+      "source": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg/user.svg"
+    }
+  },
+  "options": {
+    "autowidth": false,
+    "config": false,
+    "css_selector": ".flaticon-{{glyph}}",
+    "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
+    "font_name": "Flaticon",
+    "force": true,
+    "input": {
+      "templates": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg",
+      "vectors": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/svg"
+    },
+    "no_hash": true,
+    "output": {
+      "css": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font",
+      "fonts": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font",
+      "preview": "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font"
+    },
+    "preprocessor_path": null,
+    "quiet": true,
+    "templates": [
+      "../../../../../sites/flaticon/libraries/webfont/templates/flaticon.html",
+      "../../../../../sites/flaticon/libraries/webfont/templates/_flaticon.scss",
+      "../../../../../sites/flaticon/libraries/webfont/templates/flaticon.css"
+    ]
+  },
+  "templates": [
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/flaticon.html",
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/_flaticon.scss",
+    "/var/www/static/flaticon/zip_packs/112154-web-navigation-line-craft/font/flaticon.css"
+  ]
+}

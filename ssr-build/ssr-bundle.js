@@ -99,7 +99,7 @@ var OperationType;
   OperationType[OperationType["MERGE"] = 1] = "MERGE";
   OperationType[OperationType["ACK_USER_WRITE"] = 2] = "ACK_USER_WRITE";
   OperationType[OperationType["LISTEN_COMPLETE"] = 3] = "LISTEN_COMPLETE";
-})(OperationType = OperationType || (OperationType = {}));
+})(OperationType || (OperationType = {}));
 /**
  * @param {boolean} fromUser
  * @param {boolean} fromServer
@@ -464,7 +464,7 @@ var TransactionStatus;
     TransactionStatus[TransactionStatus["SENT_NEEDS_ABORT"] = 3] = "SENT_NEEDS_ABORT";
     // Temporary state used to mark transactions that need to be aborted.
     TransactionStatus[TransactionStatus["NEEDS_ABORT"] = 4] = "NEEDS_ABORT";
-})(TransactionStatus = TransactionStatus || (TransactionStatus = {}));
+})(TransactionStatus || (TransactionStatus = {}));
 /**
  * If a transaction does not succeed after 25 retries, we abort it.  Among other things this ensure that if there's
  * ever a bug causing a mismatch between client / server hashes for some data, we won't retry indefinitely.
@@ -3003,7 +3003,7 @@ var NamedNode = /** @class */function () {
   }
 
   function Promise(fn) {
-    if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new');
+    if (!(this instanceof Promise)) throw new TypeError('Promises must be constructed via new');
     if (typeof fn !== 'function') throw new TypeError('not a function');
     this._state = 0;
     this._handled = false;
@@ -3127,9 +3127,9 @@ var NamedNode = /** @class */function () {
   };
 
   Promise.all = function (arr) {
-    var args = Array.prototype.slice.call(arr);
-
     return new Promise(function (resolve, reject) {
+      if (!arr || typeof arr.length === 'undefined') throw new TypeError('Promise.all accepts an array');
+      var args = Array.prototype.slice.call(arr);
       if (args.length === 0) return resolve([]);
       var remaining = args.length;
 
@@ -6351,8 +6351,6 @@ function preact_router_es_assign(obj, props) {
 }
 
 function exec(url, route, opts) {
-	if (opts === void 0) opts = EMPTY$1;
-
 	var reg = /(?:\?([^#]*))?(#.*)?$/,
 	    c = url.match(reg),
 	    matches = {},
@@ -6395,28 +6393,30 @@ function exec(url, route, opts) {
 }
 
 function pathRankSort(a, b) {
-	var aAttr = a.attributes || EMPTY$1,
-	    bAttr = b.attributes || EMPTY$1;
-	if (aAttr.default) {
-		return 1;
-	}
-	if (bAttr.default) {
-		return -1;
-	}
-	var diff = rank(aAttr.path) - rank(bAttr.path);
-	return diff || aAttr.path.length - bAttr.path.length;
+	return a.rank < b.rank ? 1 : a.rank > b.rank ? -1 : a.index - b.index;
+}
+
+// filter out VNodes without attributes (which are unrankeable), and add `index`/`rank` properties to be used in sorting.
+function prepareVNodeForRanking(vnode, index) {
+	vnode.index = index;
+	vnode.rank = rankChild(vnode);
+	return vnode.attributes;
 }
 
 function segmentize(url) {
-	return strip(url).split('/');
+	return url.replace(/(^\/+|\/+$)/g, '').split('/');
 }
 
-function rank(url) {
-	return (strip(url).match(/\/+/g) || '').length;
+function rankSegment(segment) {
+	return segment.charAt(0) == ':' ? 1 + '*+?'.indexOf(segment.charAt(segment.length - 1)) || 4 : 5;
 }
 
-function strip(url) {
-	return url.replace(/(^\/+|\/+$)/g, '');
+function rank(path) {
+	return segmentize(path).map(rankSegment).join('');
+}
+
+function rankChild(vnode) {
+	return vnode.attributes.default ? 0 : rank(vnode.attributes.path);
 }
 
 var customHistory = null;
@@ -6561,7 +6561,7 @@ function initEventListeners() {
 	if (typeof addEventListener === 'function') {
 		if (!customHistory) {
 			addEventListener('popstate', function () {
-				return routeTo(getCurrentUrl());
+				routeTo(getCurrentUrl());
 			});
 		}
 		addEventListener('click', delegateLinkHandler);
@@ -6645,19 +6645,18 @@ var preact_router_es_Router = function (Component$$1) {
 	};
 
 	Router.prototype.getMatchingChildren = function getMatchingChildren(children, url, invoke) {
-		return children.slice().sort(pathRankSort).map(function (vnode) {
-			var attrs = vnode.attributes || {},
-			    path = attrs.path,
-			    matches = exec(url, path, attrs);
+		return children.filter(prepareVNodeForRanking).sort(pathRankSort).map(function (vnode) {
+			var matches = exec(url, vnode.attributes.path, vnode.attributes);
 			if (matches) {
 				if (invoke !== false) {
 					var newProps = { url: url, matches: matches };
 					preact_router_es_assign(newProps, matches);
+					delete newProps.ref;
+					delete newProps.key;
 					return Object(preact_min["cloneElement"])(vnode, newProps);
 				}
 				return vnode;
 			}
-			return false;
 		}).filter(Boolean);
 	};
 
@@ -7112,8 +7111,6 @@ var cssClasses = {
 };
 
 var strings = {
-  VAR_SURFACE_WIDTH: '--mdc-ripple-surface-width',
-  VAR_SURFACE_HEIGHT: '--mdc-ripple-surface-height',
   VAR_FG_SIZE: '--mdc-ripple-fg-size',
   VAR_LEFT: '--mdc-ripple-left',
   VAR_TOP: '--mdc-ripple-top',
@@ -7880,16 +7877,12 @@ var foundation_MDCRippleFoundation = function (_MDCFoundation) {
 
   MDCRippleFoundation.prototype.updateLayoutCssVars_ = function updateLayoutCssVars_() {
     var _MDCRippleFoundation$6 = MDCRippleFoundation.strings,
-        VAR_SURFACE_WIDTH = _MDCRippleFoundation$6.VAR_SURFACE_WIDTH,
-        VAR_SURFACE_HEIGHT = _MDCRippleFoundation$6.VAR_SURFACE_HEIGHT,
         VAR_FG_SIZE = _MDCRippleFoundation$6.VAR_FG_SIZE,
         VAR_LEFT = _MDCRippleFoundation$6.VAR_LEFT,
         VAR_TOP = _MDCRippleFoundation$6.VAR_TOP,
         VAR_FG_SCALE = _MDCRippleFoundation$6.VAR_FG_SCALE;
 
 
-    this.adapter_.updateCssVariable(VAR_SURFACE_WIDTH, this.frame_.width + 'px');
-    this.adapter_.updateCssVariable(VAR_SURFACE_HEIGHT, this.frame_.height + 'px');
     this.adapter_.updateCssVariable(VAR_FG_SIZE, this.initialSize_ + 'px');
     this.adapter_.updateCssVariable(VAR_FG_SCALE, this.fgScale_);
 
@@ -10969,7 +10962,11 @@ var Icon_Icon = function (_MaterialComponent) {
   }
 
   Icon.prototype.materialDom = function materialDom(props) {
-    return Object(preact_min["h"])("i", Icon__extends({}, props, { className: "material-icons" }), props.children);
+    var classes = ["material-icons"];
+    if (props.className) {
+      classes.push(props.className);
+    }
+    return Object(preact_min["h"])("i", Icon__extends({}, props, { className: classes.join(",") }), props.children);
   };
 
   return Icon;
@@ -11294,6 +11291,10 @@ var Switch_Switch = function (_MaterialComponent) {
 var Switch_style = __webpack_require__("IpTH");
 var Switch_style_default = /*#__PURE__*/__webpack_require__.n(Switch_style);
 
+// EXTERNAL MODULE: ../node_modules/preact-material-components/Button/style.css
+var Button_style = __webpack_require__("aqQ4");
+var Button_style_default = /*#__PURE__*/__webpack_require__.n(Button_style);
+
 // EXTERNAL MODULE: ../node_modules/preact-material-components/Dialog/style.css
 var Dialog_style = __webpack_require__("sEh6");
 var Dialog_style_default = /*#__PURE__*/__webpack_require__.n(Dialog_style);
@@ -11337,206 +11338,206 @@ function header__inherits(subClass, superClass) { if (typeof superClass !== "fun
 
 
 
+
 var _ref = Object(preact_min["h"])(
-	preact_material_components_Toolbar.Title,
-	null,
-	'Curriculum vitae'
+  preact_material_components_Drawer.TemporaryDrawerHeader,
+  { className: 'mdc-theme--primary-bg' },
+  'Curriculum vitae'
 );
 
 var _ref2 = Object(preact_min["h"])(
-	preact_material_components_Toolbar.Icon,
-	null,
-	'settings'
+  preact_material_components_List.ItemIcon,
+  null,
+  'person'
 );
 
 var header__ref3 = Object(preact_min["h"])(
-	preact_material_components_Drawer.TemporaryDrawerHeader,
-	{ className: 'mdc-theme--primary-bg' },
-	'Curriculum vitae'
+  preact_material_components_List.ItemIcon,
+  null,
+  'build'
 );
 
 var header__ref4 = Object(preact_min["h"])(
-	preact_material_components_List.ItemIcon,
-	null,
-	'person'
+  preact_material_components_List.ItemIcon,
+  null,
+  'library_books'
 );
 
 var _ref5 = Object(preact_min["h"])(
-	preact_material_components_List.ItemIcon,
-	null,
-	'build'
+  preact_material_components_List.ItemIcon,
+  null,
+  'school'
 );
 
 var _ref6 = Object(preact_min["h"])(
-	preact_material_components_List.ItemIcon,
-	null,
-	'library_books'
+  preact_material_components_List.ItemIcon,
+  null,
+  'public'
 );
 
 var _ref7 = Object(preact_min["h"])(
-	preact_material_components_List.ItemIcon,
-	null,
-	'school'
+  preact_material_components_Dialog.Header,
+  null,
+  'Settings'
 );
 
 var _ref8 = Object(preact_min["h"])(
-	preact_material_components_List.ItemIcon,
-	null,
-	'public'
-);
-
-var _ref9 = Object(preact_min["h"])(
-	preact_material_components_Dialog.Header,
-	null,
-	'Settings'
-);
-
-var _ref10 = Object(preact_min["h"])(
-	preact_material_components_Dialog.Footer,
-	null,
-	Object(preact_min["h"])(
-		preact_material_components_Dialog.FooterButton,
-		{ accept: true },
-		'okay'
-	)
+  preact_material_components_Dialog.Footer,
+  null,
+  Object(preact_min["h"])(
+    preact_material_components_Dialog.FooterButton,
+    { cancel: true },
+    'Decline'
+  ),
+  Object(preact_min["h"])(
+    preact_material_components_Dialog.FooterButton,
+    { accept: true },
+    'okay'
+  )
 );
 
 var header_Header = function (_Component) {
-	header__inherits(Header, _Component);
+  header__inherits(Header, _Component);
 
-	function Header() {
-		header__classCallCheck(this, Header);
+  function Header() {
+    header__classCallCheck(this, Header);
 
-		return header__possibleConstructorReturn(this, _Component.apply(this, arguments));
-	}
+    return header__possibleConstructorReturn(this, _Component.apply(this, arguments));
+  }
 
-	Header.prototype.closeDrawer = function closeDrawer() {
-		this.drawer.MDComponent.open = false;
-		this.state = {
-			darkThemeEnabled: false
-		};
-	};
+  Header.prototype.closeDrawer = function closeDrawer() {
+    this.drawer.MDComponent.open = false;
+    this.state = {
+      darkThemeEnabled: false
+    };
+  };
 
-	Header.prototype.render = function render() {
-		var _this2 = this;
+  Header.prototype.render = function render() {
+    var _this2 = this;
 
-		return Object(preact_min["h"])(
-			'div',
-			null,
-			Object(preact_min["h"])(
-				preact_material_components_Toolbar,
-				{ className: 'toolbar' },
-				Object(preact_min["h"])(
-					preact_material_components_Toolbar.Row,
-					null,
-					Object(preact_min["h"])(
-						preact_material_components_Toolbar.Section,
-						{ 'align-start': true },
-						Object(preact_min["h"])(
-							preact_material_components_Toolbar.Icon,
-							{ menu: true, onClick: function onClick() {
-									_this2.drawer.MDComponent.open = true;
-								} },
-							'menu'
-						),
-						_ref
-					),
-					Object(preact_min["h"])(
-						preact_material_components_Toolbar.Section,
-						{ 'align-end': true, onClick: function onClick() {
-								_this2.dialog.MDComponent.show();
-							} },
-						_ref2
-					)
-				)
-			),
-			Object(preact_min["h"])(
-				preact_material_components_Drawer.TemporaryDrawer,
-				{ ref: function ref(drawer) {
-						_this2.drawer = drawer;
-					} },
-				header__ref3,
-				Object(preact_min["h"])(
-					preact_material_components_Drawer.TemporaryDrawerContent,
-					null,
-					Object(preact_min["h"])(
-						preact_material_components_List,
-						null,
-						Object(preact_min["h"])(
-							preact_material_components_List.LinkItem,
-							{ onClick: function onClick() {
-									route('/');_this2.closeDrawer();
-								} },
-							header__ref4,
-							'Base Info'
-						),
-						Object(preact_min["h"])(
-							preact_material_components_List.LinkItem,
-							{ onClick: function onClick() {
-									route('/skills');_this2.closeDrawer();
-								} },
-							_ref5,
-							'Skills'
-						),
-						Object(preact_min["h"])(
-							preact_material_components_List.LinkItem,
-							{ onClick: function onClick() {
-									route('/experience');_this2.closeDrawer();
-								} },
-							_ref6,
-							'Experience'
-						),
-						Object(preact_min["h"])(
-							preact_material_components_List.LinkItem,
-							{ onClick: function onClick() {
-									route('/education');_this2.closeDrawer();
-								} },
-							_ref7,
-							'Education'
-						),
-						Object(preact_min["h"])(
-							preact_material_components_List.LinkItem,
-							{ onClick: function onClick() {
-									route('/events');_this2.closeDrawer();
-								} },
-							_ref8,
-							'Courses, Trainings, Certification'
-						)
-					)
-				)
-			),
-			Object(preact_min["h"])(
-				preact_material_components_Dialog,
-				{ ref: function ref(dialog) {
-						_this2.dialog = dialog;
-					} },
-				_ref9,
-				Object(preact_min["h"])(
-					preact_material_components_Dialog.Body,
-					null,
-					Object(preact_min["h"])(
-						'div',
-						null,
-						'Enable dark theme ',
-						Object(preact_min["h"])(Switch_Switch, { onClick: function onClick() {
-								_this2.setState({
-									darkThemeEnabled: !_this2.state.darkThemeEnabled
-								}, function () {
-									if (_this2.state.darkThemeEnabled) {
-										document.body.classList.add('mdc-theme--dark');
-									} else {
-										document.body.classList.remove('mdc-theme--dark');
-									}
-								});
-							} })
-					)
-				),
-				_ref10
-			)
-		);
-	};
+    return Object(preact_min["h"])(
+      'div',
+      null,
+      Object(preact_min["h"])(
+        preact_material_components_Toolbar,
+        { className: 'toolbar' },
+        Object(preact_min["h"])(
+          preact_material_components_Toolbar.Row,
+          null,
+          Object(preact_min["h"])(
+            preact_material_components_Toolbar.Section,
+            { 'align-start': true },
+            Object(preact_min["h"])(
+              preact_material_components_Toolbar.Icon,
+              { menu: true, onClick: function onClick() {
+                  _this2.drawer.MDComponent.open = true;
+                } },
+              'menu'
+            ),
+            Object(preact_min["h"])(
+              preact_material_components_Toolbar.Title,
+              { className: header_style_default.a.mr, onClick: function onClick() {
+                  route('/');_this2.closeDrawer();
+                } },
+              'Curriculum vitae'
+            ),
+            Object(preact_min["h"])(
+              preact_material_components_Toolbar.Icon,
+              { onClick: function onClick() {
+                  _this2.dialog.MDComponent.show();
+                } },
+              'settings'
+            )
+          )
+        )
+      ),
+      Object(preact_min["h"])(
+        preact_material_components_Drawer.TemporaryDrawer,
+        { ref: function ref(drawer) {
+            _this2.drawer = drawer;
+          } },
+        _ref,
+        Object(preact_min["h"])(
+          preact_material_components_Drawer.TemporaryDrawerContent,
+          null,
+          Object(preact_min["h"])(
+            preact_material_components_List,
+            null,
+            Object(preact_min["h"])(
+              preact_material_components_List.LinkItem,
+              { onClick: function onClick() {
+                  route('/');_this2.closeDrawer();
+                } },
+              _ref2,
+              'Base Info'
+            ),
+            Object(preact_min["h"])(
+              preact_material_components_List.LinkItem,
+              { onClick: function onClick() {
+                  route('/skills');_this2.closeDrawer();
+                } },
+              header__ref3,
+              'Skills'
+            ),
+            Object(preact_min["h"])(
+              preact_material_components_List.LinkItem,
+              { onClick: function onClick() {
+                  route('/experience');_this2.closeDrawer();
+                } },
+              header__ref4,
+              'Experience'
+            ),
+            Object(preact_min["h"])(
+              preact_material_components_List.LinkItem,
+              { onClick: function onClick() {
+                  route('/education');_this2.closeDrawer();
+                } },
+              _ref5,
+              'Education'
+            ),
+            Object(preact_min["h"])(
+              preact_material_components_List.LinkItem,
+              { onClick: function onClick() {
+                  route('/events');_this2.closeDrawer();
+                } },
+              _ref6,
+              'Courses, Trainings, Certification'
+            )
+          )
+        )
+      ),
+      Object(preact_min["h"])(
+        preact_material_components_Dialog,
+        { ref: function ref(dialog) {
+            _this2.dialog = dialog;
+          } },
+        _ref7,
+        Object(preact_min["h"])(
+          preact_material_components_Dialog.Body,
+          null,
+          Object(preact_min["h"])(
+            'div',
+            null,
+            'Enable dark theme',
+            Object(preact_min["h"])(Switch_Switch, { onClick: function onClick() {
+                _this2.setState({
+                  darkThemeEnabled: !_this2.state.darkThemeEnabled
+                }, function () {
+                  if (_this2.state.darkThemeEnabled) {
+                    document.body.classList.add('mdc-theme--dark');
+                  } else {
+                    document.body.classList.remove('mdc-theme--dark');
+                  }
+                });
+              } })
+          )
+        ),
+        _ref8
+      )
+    );
+  };
 
-	return Header;
+  return Header;
 }(preact_min["Component"]);
 
 
@@ -11691,18 +11692,22 @@ var LayoutGrid_LayoutGridCell = function (_MaterialComponent3) {
       classes.push(baseClass + "align-" + props[this._propsDict.align]);
     }
 
+    if (props.className) {
+      classes.push(props.className);
+    }
+
     return classes.join(" ");
   };
 
   LayoutGridCell.prototype.materialDom = function materialDom(props) {
     var _this6 = this;
 
-    return Object(preact_min["h"])("div", LayoutGrid__extends({
+    return Object(preact_min["h"])("div", LayoutGrid__extends({}, props, {
       className: this.createClassName(props),
       ref: function ref(control) {
         _this6.control = control;
       }
-    }, props), props.children);
+    }), props.children);
   };
 
   LayoutGridCell.prototype.render = function render() {
@@ -11744,7 +11749,8 @@ LayoutGrid_LayoutGrid.Inner = LayoutGrid_LayoutGridInner;
 /**
  * @typedef {{
  *   noPrefix: string,
- *   webkitPrefix: string
+ *   webkitPrefix: string,
+ *   styleProperty: string
  * }}
  */
 var VendorPropertyMapType = void 0;
@@ -12153,7 +12159,7 @@ var LinearProgress_LinearProgress = function (_MaterialComponent) {
     var _this = LinearProgress__possibleConstructorReturn(this, _MaterialComponent.call(this));
 
     _this.componentName = "linear-progress";
-    _this._mdcProps = ["indeterminate", "reversed", "accent"];
+    _this._mdcProps = ["indeterminate", "reversed"];
     return _this;
   }
 
@@ -12233,6 +12239,8 @@ function base__classCallCheck(instance, Constructor) { if (!(instance instanceof
 function base__possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function base__inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
 
 
 
@@ -12334,7 +12342,12 @@ var base_Base = function (_Component) {
             Object(preact_min["h"])(
               'p',
               { className: base_style_default.a.position },
-              data.title
+              data.title,
+              Object(preact_min["h"])(
+                preact_material_components_Button,
+                { className: base_style_default.a.button, href: data.resume_pdf, target: '_blank', rel: 'nofollow noopener', stroked: true },
+                'Download PDF'
+              )
             ),
             Object(preact_min["h"])(
               'p',
@@ -12462,23 +12475,23 @@ function home__inherits(subClass, superClass) { if (typeof superClass !== "funct
 var home__ref = Object(preact_min["h"])(base_Base, null);
 
 var home_Home = function (_Component) {
-	home__inherits(Home, _Component);
+  home__inherits(Home, _Component);
 
-	function Home() {
-		home__classCallCheck(this, Home);
+  function Home() {
+    home__classCallCheck(this, Home);
 
-		return home__possibleConstructorReturn(this, _Component.apply(this, arguments));
-	}
+    return home__possibleConstructorReturn(this, _Component.apply(this, arguments));
+  }
 
-	Home.prototype.render = function render() {
-		return Object(preact_min["h"])(
-			'div',
-			{ 'class': home_style_default.a.home },
-			home__ref
-		);
-	};
+  Home.prototype.render = function render() {
+    return Object(preact_min["h"])(
+      'div',
+      { 'class': home_style_default.a.home },
+      home__ref
+    );
+  };
 
-	return Home;
+  return Home;
 }(preact_min["Component"]);
 
 
@@ -16563,12 +16576,12 @@ var Deferred = /** @class */function () {
         });
     }
     /**
-    * Our API internals are not promiseified and cannot because our callback APIs have subtle expectations around
-    * invoking promises inline, which Promises are forbidden to do. This method accepts an optional node-style callback
-    * and returns a node-style callback which will resolve or reject the Deferred's promise.
-    * @param {((?function(?(Error)): (?|undefined))| (?function(?(Error),?=): (?|undefined)))=} callback
-    * @return {!function(?(Error), ?=)}
-    */
+     * Our API internals are not promiseified and cannot because our callback APIs have subtle expectations around
+     * invoking promises inline, which Promises are forbidden to do. This method accepts an optional node-style callback
+     * and returns a node-style callback which will resolve or reject the Deferred's promise.
+     * @param {((?function(?(Error)): (?|undefined))| (?function(?(Error),?=): (?|undefined)))=} callback
+     * @return {!function(?(Error), ?=)}
+     */
     Deferred.prototype.wrapCallback = function (callback) {
         var _this = this;
         return function (error, value) {
@@ -18168,7 +18181,7 @@ __webpack_require__("RJVP");
     this.a = a;this.b = b;this.next = null;
   };qb.prototype.reset = function () {
     this.next = this.b = this.a = null;
-  };function vb(a) {
+  };function ub(a) {
     k.setTimeout(function () {
       throw a;
     }, 0);
@@ -18219,7 +18232,7 @@ __webpack_require__("RJVP");
       try {
         a.a.call(a.b);
       } catch (b) {
-        vb(b);
+        ub(b);
       }pb(rb, a);
     }Bb = !1;
   };function z(a, b) {
@@ -18361,7 +18374,7 @@ __webpack_require__("RJVP");
     a.g = !0;yb(function () {
       a.g && Zb.call(null, b);
     });
-  }var Zb = vb;function Gb(a) {
+  }var Zb = ub;function Gb(a) {
     u.call(this, a);
   }t(Gb, u);Gb.prototype.name = "cancel";var $b = !y || 9 <= Number(kb);function ac() {
     this.a = "";this.b = bc;
@@ -18404,14 +18417,14 @@ __webpack_require__("RJVP");
   }var mc = {};function qc(a) {
     var b = new lc();b.a = a;return b;
   }qc("about:blank");function rc() {
-    this.a = "";this.b = tc;
+    this.a = "";this.b = sc;
   }rc.prototype.la = !0;rc.prototype.ja = function () {
     return this.a;
   };rc.prototype.toString = function () {
     return "SafeHtml{" + this.a + "}";
   };function uc(a) {
-    if (a instanceof rc && a.constructor === rc && a.b === tc) return a.a;Aa("expected object of type SafeHtml, got '" + a + "' of type " + da(a));return "type_error:SafeHtml";
-  }var tc = {};function vc(a) {
+    if (a instanceof rc && a.constructor === rc && a.b === sc) return a.a;Aa("expected object of type SafeHtml, got '" + a + "' of type " + da(a));return "type_error:SafeHtml";
+  }var sc = {};function vc(a) {
     var b = new rc();b.a = a;return b;
   }vc("<!DOCTYPE html>");vc("");vc("<br>");function wc(a) {
     var b = document;return m(a) ? b.getElementById(a) : a;
@@ -18827,10 +18840,10 @@ __webpack_require__("RJVP");
     }d = a.a[0] | 0;e = a.a[1] | 0;var l = a.a[2] | 0,
         n = a.a[3] | 0,
         D = a.a[4] | 0,
-        ub = a.a[5] | 0,
-        sc = a.a[6] | 0;f = a.a[7] | 0;for (b = 0; 64 > b; b++) {
-      var yj = ((d >>> 2 | d << 30) ^ (d >>> 13 | d << 19) ^ (d >>> 22 | d << 10)) + (d & e ^ d & l ^ e & l) | 0;g = D & ub ^ ~D & sc;f = f + ((D >>> 6 | D << 26) ^ (D >>> 11 | D << 21) ^ (D >>> 25 | D << 7)) | 0;g = g + (ae[b] | 0) | 0;g = f + (g + (c[b] | 0) | 0) | 0;f = sc;sc = ub;ub = D;D = n + g | 0;n = l;l = e;e = d;d = g + yj | 0;
-    }a.a[0] = a.a[0] + d | 0;a.a[1] = a.a[1] + e | 0;a.a[2] = a.a[2] + l | 0;a.a[3] = a.a[3] + n | 0;a.a[4] = a.a[4] + D | 0;a.a[5] = a.a[5] + ub | 0;a.a[6] = a.a[6] + sc | 0;a.a[7] = a.a[7] + f | 0;
+        vb = a.a[5] | 0,
+        tc = a.a[6] | 0;f = a.a[7] | 0;for (b = 0; 64 > b; b++) {
+      var Bj = ((d >>> 2 | d << 30) ^ (d >>> 13 | d << 19) ^ (d >>> 22 | d << 10)) + (d & e ^ d & l ^ e & l) | 0;g = D & vb ^ ~D & tc;f = f + ((D >>> 6 | D << 26) ^ (D >>> 11 | D << 21) ^ (D >>> 25 | D << 7)) | 0;g = g + (ae[b] | 0) | 0;g = f + (g + (c[b] | 0) | 0) | 0;f = tc;tc = vb;vb = D;D = n + g | 0;n = l;l = e;e = d;d = g + Bj | 0;
+    }a.a[0] = a.a[0] + d | 0;a.a[1] = a.a[1] + e | 0;a.a[2] = a.a[2] + l | 0;a.a[3] = a.a[3] + n | 0;a.a[4] = a.a[4] + D | 0;a.a[5] = a.a[5] + vb | 0;a.a[6] = a.a[6] + tc | 0;a.a[7] = a.a[7] + f | 0;
   }
   function he(a, b, c) {
     void 0 === c && (c = b.length);var d = 0,
@@ -19590,7 +19603,7 @@ __webpack_require__("RJVP");
     }fd(l, "complete", function () {
       n && clearTimeout(n);var a = null;try {
         a = JSON.parse(hf(this)) || null;
-      } catch (ub) {
+      } catch (vb) {
         a = null;
       }b && b(a);
     });ld(l, "ready", function () {
@@ -19681,36 +19694,36 @@ __webpack_require__("RJVP");
   function hi(a) {
     if (!a.requestUri || !a.sessionId && !a.postBody) throw new N("internal-error");
   }function ii(a) {
-    var b = null;a.needConfirmation ? (a.code = "account-exists-with-different-credential", b = Ah(a)) : "FEDERATED_USER_ID_ALREADY_LINKED" == a.errorMessage ? (a.code = "credential-already-in-use", b = Ah(a)) : "EMAIL_EXISTS" == a.errorMessage && (a.code = "email-already-in-use", b = Ah(a));if (b) throw b;if (!a[_O]) throw new N("internal-error");
-  }function Xg(a, b) {
-    b.returnIdpCredential = !0;return Q(a, ji, b);
+    var b = null;a.needConfirmation ? (a.code = "account-exists-with-different-credential", b = Ah(a)) : "FEDERATED_USER_ID_ALREADY_LINKED" == a.errorMessage ? (a.code = "credential-already-in-use", b = Ah(a)) : "EMAIL_EXISTS" == a.errorMessage ? (a.code = "email-already-in-use", b = Ah(a)) : a.errorMessage && (b = ji(a.errorMessage));if (b) throw b;if (!a[_O]) throw new N("internal-error");
   }
-  function Zg(a, b) {
+  function Xg(a, b) {
     b.returnIdpCredential = !0;return Q(a, ki, b);
+  }function Zg(a, b) {
+    b.returnIdpCredential = !0;return Q(a, li, b);
   }function $g(a, b) {
-    b.returnIdpCredential = !0;b.autoCreate = !1;return Q(a, li, b);
-  }function mi(a) {
+    b.returnIdpCredential = !0;b.autoCreate = !1;return Q(a, mi, b);
+  }function ni(a) {
     if (!a.oobCode) throw new N("invalid-action-code");
   }h.Ta = function (a, b) {
-    return Q(this, ni, { oobCode: a, newPassword: b });
+    return Q(this, oi, { oobCode: a, newPassword: b });
   };h.Ia = function (a) {
-    return Q(this, oi, { oobCode: a });
-  };h.Sa = function (a) {
     return Q(this, pi, { oobCode: a });
+  };h.Sa = function (a) {
+    return Q(this, qi, { oobCode: a });
   };
-  var pi = { endpoint: "setAccountInfo", D: mi, ga: "email" },
-      oi = { endpoint: "resetPassword", D: mi, O: function O(a) {
+  var qi = { endpoint: "setAccountInfo", D: ni, ga: "email" },
+      pi = { endpoint: "resetPassword", D: ni, O: function O(a) {
       if (!a.email || !a.requestType) throw new N("internal-error");
     } },
-      qi = { endpoint: "signupNewUser", D: function D(a) {
+      ri = { endpoint: "signupNewUser", D: function D(a) {
       Rh(a);if (!a.password) throw new N("weak-password");
     }, O: Xh, T: !0 },
       Uh = { endpoint: "createAuthUri" },
-      ri = { endpoint: "deleteAccount", ea: ["idToken"] },
+      si = { endpoint: "deleteAccount", ea: ["idToken"] },
       gi = { endpoint: "setAccountInfo", ea: ["idToken", "deleteProvider"], D: function D(a) {
       if (!fa(a.deleteProvider)) throw new N("internal-error");
     } },
-      si = { endpoint: "getAccountInfo" },
+      ti = { endpoint: "getAccountInfo" },
       ci = { endpoint: "getOobConfirmationCode", ea: ["idToken", "requestType"], D: function D(a) {
       if ("VERIFY_EMAIL" != a.requestType) throw new N("internal-error");
     }, ga: "email" },
@@ -19718,26 +19731,26 @@ __webpack_require__("RJVP");
       if ("PASSWORD_RESET" != a.requestType) throw new N("internal-error");Rh(a);
     }, ga: "email" },
       Wh = { nb: !0, endpoint: "getProjectConfig", yb: "GET" },
-      ti = { nb: !0, endpoint: "getRecaptchaParam", yb: "GET", O: function O(a) {
+      ui = { nb: !0, endpoint: "getRecaptchaParam", yb: "GET", O: function O(a) {
       if (!a.recaptchaSiteKey) throw new N("internal-error");
     } },
-      ni = { endpoint: "resetPassword",
-    D: mi, ga: "email" },
+      oi = { endpoint: "resetPassword",
+    D: ni, ga: "email" },
       di = { endpoint: "sendVerificationCode", ea: ["phoneNumber", "recaptchaToken"], ga: "sessionInfo" },
       $h = { endpoint: "setAccountInfo", ea: ["idToken"], D: Sh, T: !0 },
       lh = { endpoint: "setAccountInfo", ea: ["idToken"], D: function D(a) {
       Sh(a);if (!a.password) throw new N("weak-password");
     }, O: Xh, T: !0 },
       Zh = { endpoint: "signupNewUser", O: Xh, T: !0 },
-      ji = { endpoint: "verifyAssertion", D: hi, O: ii, T: !0 },
-      li = { endpoint: "verifyAssertion", D: hi, O: function O(a) {
+      ki = { endpoint: "verifyAssertion", D: hi, O: ii, T: !0 },
+      mi = { endpoint: "verifyAssertion", D: hi, O: function O(a) {
       if (a.errorMessage && "USER_NOT_FOUND" == a.errorMessage) throw new N("user-not-found");
-      if (!a[_O]) throw new N("internal-error");
+      if (a.errorMessage) throw ji(a.errorMessage);if (!a[_O]) throw new N("internal-error");
     }, T: !0 },
-      ki = { endpoint: "verifyAssertion", D: function D(a) {
+      li = { endpoint: "verifyAssertion", D: function D(a) {
       hi(a);if (!a.idToken) throw new N("internal-error");
     }, O: ii, T: !0 },
-      ui = { endpoint: "verifyCustomToken", D: function D(a) {
+      vi = { endpoint: "verifyCustomToken", D: function D(a) {
       if (!a.token) throw new N("invalid-custom-token");
     }, O: Xh, T: !0 },
       kh = { endpoint: "verifyPassword", D: function D(a) {
@@ -19760,6 +19773,8 @@ __webpack_require__("RJVP");
     }).then(b.O).then(function () {
       if (!b.ga) return e;if (!(b.ga in e)) throw new N("internal-error");return e[b.ga];
     });
+  }function ji(a) {
+    return Ph({ error: { errors: [{ message: a }], code: 400, message: a } });
   }
   function Ph(a, b) {
     var c = (a.error && a.error.errors && a.error.errors[0] || {}).reason || "";var d = { keyInvalid: "invalid-api-key", ipRefererBlocked: "app-not-authorized" };if (c = d[c] ? new N(d[c]) : null) return c;c = a.error && a.error.message || "";d = { INVALID_CUSTOM_TOKEN: "invalid-custom-token", CREDENTIAL_MISMATCH: "custom-token-mismatch", MISSING_CUSTOM_TOKEN: "internal-error", INVALID_IDENTIFIER: "invalid-email", MISSING_CONTINUE_URI: "internal-error", INVALID_EMAIL: "invalid-email", INVALID_PASSWORD: "wrong-password", USER_DISABLED: "user-disabled",
@@ -19769,69 +19784,69 @@ __webpack_require__("RJVP");
       UNAUTHORIZED_DOMAIN: "unauthorized-continue-uri", INVALID_OAUTH_CLIENT_ID: "invalid-oauth-client-id", INVALID_CERT_HASH: "invalid-cert-hash" };Wa(d, b || {});b = (b = c.match(/^[^\s]+\s*:\s*(.*)$/)) && 1 < b.length ? b[1] : void 0;for (var e in d) {
       if (0 === c.indexOf(e)) return new N(d[e], b);
     }!b && a && (b = Uf(a));return new N("internal-error", b);
-  };var vi = { Ic: { Va: "https://www.googleapis.com/identitytoolkit/v3/relyingparty/", ab: "https://securetoken.googleapis.com/v1/token", id: "p" }, Kc: { Va: "https://staging-www.sandbox.googleapis.com/identitytoolkit/v3/relyingparty/", ab: "https://staging-securetoken.sandbox.googleapis.com/v1/token", id: "s" }, Lc: { Va: "https://www-googleapis-test.sandbox.google.com/identitytoolkit/v3/relyingparty/", ab: "https://test-securetoken.sandbox.googleapis.com/v1/token", id: "t" } };
-  function wi(a) {
-    for (var b in vi) {
-      if (vi[b].id === a) return a = vi[b], { firebaseEndpoint: a.Va, secureTokenEndpoint: a.ab };
+  };var wi = { Ic: { Va: "https://www.googleapis.com/identitytoolkit/v3/relyingparty/", ab: "https://securetoken.googleapis.com/v1/token", id: "p" }, Kc: { Va: "https://staging-www.sandbox.googleapis.com/identitytoolkit/v3/relyingparty/", ab: "https://staging-securetoken.sandbox.googleapis.com/v1/token", id: "s" }, Lc: { Va: "https://www-googleapis-test.sandbox.google.com/identitytoolkit/v3/relyingparty/", ab: "https://test-securetoken.sandbox.googleapis.com/v1/token", id: "t" } };
+  function xi(a) {
+    for (var b in wi) {
+      if (wi[b].id === a) return a = wi[b], { firebaseEndpoint: a.Va, secureTokenEndpoint: a.ab };
     }return null;
-  }var xi;xi = wi("__EID__") ? "__EID__" : void 0;function yi(a) {
-    this.b = a;this.a = null;this.Ya = zi(this);
+  }var yi;yi = xi("__EID__") ? "__EID__" : void 0;function zi(a) {
+    this.b = a;this.a = null;this.Ya = Ai(this);
   }
-  function zi(a) {
-    return Ai().then(function () {
+  function Ai(a) {
+    return Bi().then(function () {
       return new z(function (b, c) {
         L("gapi.iframes.getContext")().open({ where: document.body, url: a.b, messageHandlersFilter: L("gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER"), attributes: { style: { position: "absolute", top: "-100px", width: "1px", height: "1px" } }, dontclear: !0 }, function (d) {
           function e() {
             clearTimeout(f);b();
           }a.a = d;a.a.restyle({ setHideOnLeave: !1 });var f = setTimeout(function () {
             c(Error("Network Error"));
-          }, Bi.get());d.ping(e).then(e, function () {
+          }, Ci.get());d.ping(e).then(e, function () {
             c(Error("Network Error"));
           });
         });
       });
     });
   }
-  function Ci(a, b) {
+  function Di(a, b) {
     return a.Ya.then(function () {
       return new z(function (c) {
         a.a.send(b.type, b, c, L("gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER"));
       });
     });
-  }function Di(a, b) {
+  }function Ei(a, b) {
     a.Ya.then(function () {
       a.a.register("authEvent", b, L("gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER"));
     });
-  }var Ei = dc("https://apis.google.com/js/api.js?onload=%{onload}"),
-      Fi = new $f(3E4, 6E4),
-      Bi = new $f(5E3, 15E3),
-      Gi = null;
-  function Ai() {
-    return Gi ? Gi : Gi = new z(function (a, b) {
+  }var Fi = dc("https://apis.google.com/js/api.js?onload=%{onload}"),
+      Gi = new $f(3E4, 6E4),
+      Ci = new $f(5E3, 15E3),
+      Hi = null;
+  function Bi() {
+    return Hi ? Hi : Hi = new z(function (a, b) {
       if (Zf()) {
         var c = function c() {
           Yf();L("gapi.load")("gapi.iframes", { callback: a, ontimeout: function ontimeout() {
               Yf();b(Error("Network Error"));
-            }, timeout: Fi.get() });
+            }, timeout: Gi.get() });
         };if (L("gapi.iframes.Iframe")) a();else if (L("gapi.load")) c();else {
           var d = "__iframefcb" + Math.floor(1E6 * Math.random()).toString();k[d] = function () {
             L("gapi.load") ? c() : b(Error("Network Error"));
-          };d = hc(Ei, { onload: d });A(kf(d)).s(function () {
+          };d = hc(Fi, { onload: d });A(kf(d)).s(function () {
             b(Error("Network Error"));
           });
         }
       } else b(Error("Network Error"));
     }).s(function (a) {
-      Gi = null;throw a;
+      Hi = null;throw a;
     });
-  };function Hi(a, b, c) {
+  };function Ii(a, b, c) {
     this.i = a;this.g = b;this.h = c;this.f = null;this.a = Ee(this.i, "/__/auth/iframe");I(this.a, "apiKey", this.g);I(this.a, "appName", this.h);this.b = null;this.c = [];
-  }Hi.prototype.toString = function () {
+  }Ii.prototype.toString = function () {
     this.f ? I(this.a, "v", this.f) : Le(this.a.a, "v");this.b ? I(this.a, "eid", this.b) : Le(this.a.a, "eid");this.c.length ? I(this.a, "fw", this.c.join(",")) : Le(this.a.a, "fw");return this.a.toString();
-  };function Ii(a, b, c, d, e) {
+  };function Ji(a, b, c, d, e) {
     this.m = a;this.u = b;this.c = c;this.l = d;this.i = this.g = this.h = null;this.a = e;this.f = null;
   }
-  Ii.prototype.toString = function () {
+  Ji.prototype.toString = function () {
     var a = Ee(this.m, "/__/auth/handler");I(a, "apiKey", this.u);I(a, "appName", this.c);I(a, "authType", this.l);if (this.a.isOAuthProvider) {
       var b = this.a;try {
         var c = firebase.app(this.c).auth().$();
@@ -19844,18 +19859,18 @@ __webpack_require__("RJVP");
       }b.Wa && b.Ua && !c[b.Wa] && (c[b.Wa] = b.Ua);Sa(c) || I(a, "customParameters", Uf(c));
     }"function" === typeof this.a.vb && (b = this.a.vb(), b.length && I(a, "scopes", b.join(",")));this.h ? I(a, "redirectUrl", this.h) : Le(a.a, "redirectUrl");this.g ? I(a, "eventId", this.g) : Le(a.a, "eventId");this.i ? I(a, "v", this.i) : Le(a.a, "v");if (this.b) for (var g in this.b) {
       this.b.hasOwnProperty(g) && !Ce(a, g) && I(a, g, this.b[g]);
-    }this.f ? I(a, "eid", this.f) : Le(a.a, "eid");g = Ji(this.c);g.length && I(a, "fw", g.join(","));return a.toString();
-  };function Ji(a) {
+    }this.f ? I(a, "eid", this.f) : Le(a.a, "eid");g = Ki(this.c);g.length && I(a, "fw", g.join(","));return a.toString();
+  };function Ki(a) {
     try {
       return firebase.app(a).auth().Ka();
     } catch (b) {
       return [];
     }
   }
-  function Ki(a, b, c, d, e) {
+  function Li(a, b, c, d, e) {
     this.u = a;this.f = b;this.b = c;this.c = d || null;this.h = e || null;this.m = this.o = this.v = null;this.g = [];this.l = this.a = null;
   }
-  function Li(a) {
+  function Mi(a) {
     var b = vf();return Vh(a).then(function (a) {
       a: {
         var c = De(b),
@@ -19867,21 +19882,21 @@ __webpack_require__("RJVP");
       }if (!a) throw new yh(vf());
     });
   }
-  function Mi(a) {
+  function Ni(a) {
     if (a.l) return a.l;a.l = Hf().then(function () {
       if (!a.o) {
         var b = a.c,
             c = a.h,
-            d = Ji(a.b),
-            e = new Hi(a.u, a.f, a.b);e.f = b;e.b = c;e.c = La(d || []);a.o = e.toString();
-      }a.i = new yi(a.o);Ni(a);
+            d = Ki(a.b),
+            e = new Ii(a.u, a.f, a.b);e.f = b;e.b = c;e.c = La(d || []);a.o = e.toString();
+      }a.i = new zi(a.o);Oi(a);
     });return a.l;
-  }h = Ki.prototype;h.Ca = function (a, b, c) {
+  }h = Li.prototype;h.Ca = function (a, b, c) {
     var d = new N("popup-closed-by-user"),
         e = new N("web-storage-unsupported"),
         f = this,
         g = !1;return this.ba().then(function () {
-      Oi(f).then(function (c) {
+      Pi(f).then(function (c) {
         c || (a && Cf(a), b(e), g = !0);
       });
     }).s(function () {}).then(function () {
@@ -19900,28 +19915,28 @@ __webpack_require__("RJVP");
   h.ub = function (a, b, c, d, e, f, g) {
     if (!a) return B(new N("popup-blocked"));if (g && !Tf()) return this.ba().s(function (b) {
       Cf(a);e(b);
-    }), d(), A();this.a || (this.a = Li(Pi(this)));var l = this;return this.a.then(function () {
+    }), d(), A();this.a || (this.a = Mi(Qi(this)));var l = this;return this.a.then(function () {
       var b = l.ba().s(function (b) {
         Cf(a);e(b);throw b;
       });d();return b;
     }).then(function () {
       vh(c);if (!g) {
-        var d = Qi(l.u, l.f, l.b, b, c, null, f, l.c, void 0, l.h);wf(d, a);
+        var d = Ri(l.u, l.f, l.b, b, c, null, f, l.c, void 0, l.h);wf(d, a);
       }
     }).s(function (a) {
       "auth/network-request-failed" == a.code && (l.a = null);throw a;
     });
   };
-  function Pi(a) {
-    a.m || (a.v = a.c ? Of(a.c, Ji(a.b)) : null, a.m = new Ch(a.f, wi(a.h), a.v));return a.m;
+  function Qi(a) {
+    a.m || (a.v = a.c ? Of(a.c, Ki(a.b)) : null, a.m = new Ch(a.f, xi(a.h), a.v));return a.m;
   }h.Aa = function (a, b, c) {
-    this.a || (this.a = Li(Pi(this)));var d = this;return this.a.then(function () {
-      vh(b);var e = Qi(d.u, d.f, d.b, a, b, vf(), c, d.c, void 0, d.h);wf(e);
+    this.a || (this.a = Mi(Qi(this)));var d = this;return this.a.then(function () {
+      vh(b);var e = Ri(d.u, d.f, d.b, a, b, vf(), c, d.c, void 0, d.h);wf(e);
     }).s(function (a) {
       "auth/network-request-failed" == a.code && (d.a = null);throw a;
     });
   };h.ba = function () {
-    var a = this;return Mi(this).then(function () {
+    var a = this;return Ni(this).then(function () {
       return a.i.Ya;
     }).s(function () {
       a.a = null;throw new N("network-request-failed");
@@ -19929,10 +19944,10 @@ __webpack_require__("RJVP");
   };h.Db = function () {
     return !0;
   };
-  function Qi(a, b, c, d, e, f, g, l, n, D) {
-    a = new Ii(a, b, c, d, e);a.h = f;a.g = g;a.i = l;a.b = Ua(n || null);a.f = D;return a.toString();
-  }function Ni(a) {
-    if (!a.i) throw Error("IfcHandler must be initialized!");Di(a.i, function (b) {
+  function Ri(a, b, c, d, e, f, g, l, n, D) {
+    a = new Ji(a, b, c, d, e);a.h = f;a.g = g;a.i = l;a.b = Ua(n || null);a.f = D;return a.toString();
+  }function Oi(a) {
+    if (!a.i) throw Error("IfcHandler must be initialized!");Ei(a.i, function (b) {
       var c = {};if (b && b.authEvent) {
         var d = !1;b = xh(b.authEvent);for (c = 0; c < a.g.length; c++) {
           d = a.g[c](b) || d;
@@ -19940,9 +19955,9 @@ __webpack_require__("RJVP");
       }c.status = "ERROR";return A(c);
     });
   }
-  function Oi(a) {
-    var b = { type: "webStorageSupport" };return Mi(a).then(function () {
-      return Ci(a.i, b);
+  function Pi(a) {
+    var b = { type: "webStorageSupport" };return Ni(a).then(function () {
+      return Di(a.i, b);
     }).then(function (a) {
       if (a && a.length && "undefined" !== typeof a[0].webStorageSupport) return a[0].webStorageSupport;throw Error();
     });
@@ -19952,9 +19967,9 @@ __webpack_require__("RJVP");
     Ja(this.g, function (b) {
       return b == a;
     });
-  };function Ri(a) {
+  };function Si(a) {
     this.a = a || firebase.INTERNAL.reactNative && firebase.INTERNAL.reactNative.AsyncStorage;if (!this.a) throw new N("internal-error", "The React Native compatibility library was not found.");
-  }h = Ri.prototype;h.get = function (a) {
+  }h = Si.prototype;h.get = function (a) {
     return A(this.a.getItem(a)).then(function (a) {
       return a && Wf(a);
     });
@@ -19962,17 +19977,21 @@ __webpack_require__("RJVP");
     return A(this.a.setItem(a, Uf(b)));
   };h.X = function (a) {
     return A(this.a.removeItem(a));
-  };h.ia = function () {};h.da = function () {};function Si() {
+  };h.ia = function () {};h.da = function () {};function Ti() {
     this.a = {};
-  }h = Si.prototype;h.get = function (a) {
+  }h = Ti.prototype;h.get = function (a) {
     return A(this.a[a]);
   };h.set = function (a, b) {
     this.a[a] = b;return A();
   };h.X = function (a) {
     delete this.a[a];return A();
-  };h.ia = function () {};h.da = function () {};function Ti(a, b, c, d, e, f) {
-    if (!window.indexedDB) throw new N("web-storage-unsupported");this.u = a;this.h = b;this.g = c;this.l = d;this.m = e;this.f = {};this.c = [];this.a = 0;this.o = f || k.indexedDB;
-  }var Ui;function Vi(a) {
+  };h.ia = function () {};h.da = function () {};function Ui(a, b, c, d, e, f) {
+    try {
+      var g = !!k.indexedDB;
+    } catch (l) {
+      g = !1;
+    }if (!g) throw new N("web-storage-unsupported");this.u = a;this.h = b;this.g = c;this.l = d;this.m = e;this.f = {};this.c = [];this.a = 0;this.o = f || k.indexedDB;
+  }var Vi;function Wi(a) {
     return new z(function (b, c) {
       var d = a.o.open(a.u, a.m);d.onerror = function (a) {
         c(Error(a.target.errorCode));
@@ -19987,13 +20006,13 @@ __webpack_require__("RJVP");
       };
     });
   }
-  function Wi(a) {
-    a.i || (a.i = Vi(a));return a.i;
-  }function Xi(a, b) {
+  function Xi(a) {
+    a.i || (a.i = Wi(a));return a.i;
+  }function Yi(a, b) {
     return b.objectStore(a.h);
-  }function Yi(a, b, c) {
+  }function Zi(a, b, c) {
     return b.transaction([a.h], c ? "readwrite" : "readonly");
-  }function Zi(a) {
+  }function $i(a) {
     return new z(function (b, c) {
       a.onsuccess = function (a) {
         a && a.target ? b(a.target.result) : b();
@@ -20001,30 +20020,30 @@ __webpack_require__("RJVP");
         c(Error(a.target.errorCode));
       };
     });
-  }h = Ti.prototype;
+  }h = Ui.prototype;
   h.set = function (a, b) {
     var c = !1,
         d,
-        e = this;return Qb(Wi(this).then(function (b) {
-      d = b;b = Xi(e, Yi(e, d, !0));return Zi(b.get(a));
+        e = this;return Qb(Xi(this).then(function (b) {
+      d = b;b = Yi(e, Zi(e, d, !0));return $i(b.get(a));
     }).then(function (f) {
-      var g = Xi(e, Yi(e, d, !0));if (f) return f.value = b, Zi(g.put(f));e.a++;c = !0;f = {};f[e.g] = a;f[e.l] = b;return Zi(g.add(f));
+      var g = Yi(e, Zi(e, d, !0));if (f) return f.value = b, $i(g.put(f));e.a++;c = !0;f = {};f[e.g] = a;f[e.l] = b;return $i(g.add(f));
     }).then(function () {
       e.f[a] = b;
     }), function () {
       c && e.a--;
     });
   };h.get = function (a) {
-    var b = this;return Wi(this).then(function (c) {
-      return Zi(Xi(b, Yi(b, c, !1)).get(a));
+    var b = this;return Xi(this).then(function (c) {
+      return $i(Yi(b, Zi(b, c, !1)).get(a));
     }).then(function (a) {
       return a && a.value;
     });
   };
   h.X = function (a) {
     var b = !1,
-        c = this;return Qb(Wi(this).then(function (d) {
-      b = !0;c.a++;return Zi(Xi(c, Yi(c, d, !0))["delete"](a));
+        c = this;return Qb(Xi(this).then(function (d) {
+      b = !0;c.a++;return $i(Yi(c, Zi(c, d, !0))["delete"](a));
     }).then(function () {
       delete c.f[a];
     }), function () {
@@ -20032,8 +20051,8 @@ __webpack_require__("RJVP");
     });
   };
   h.vc = function () {
-    var a = this;return Wi(this).then(function (b) {
-      var c = Xi(a, Yi(a, b, !1));return c.getAll ? Zi(c.getAll()) : new z(function (a, b) {
+    var a = this;return Xi(this).then(function (b) {
+      var c = Yi(a, Zi(a, b, !1));return c.getAll ? $i(c.getAll()) : new z(function (a, b) {
         var d = [],
             e = c.openCursor();e.onsuccess = function (b) {
           (b = b.target.result) ? (d.push(b.value), b["continue"]()) : a(d);
@@ -20050,13 +20069,13 @@ __webpack_require__("RJVP");
       }return d;
     });
   };h.ia = function (a) {
-    0 == this.c.length && $i(this);this.c.push(a);
+    0 == this.c.length && aj(this);this.c.push(a);
   };
   h.da = function (a) {
     Ja(this.c, function (b) {
       return b == a;
     });0 == this.c.length && this.b && this.b.cancel("STOP_EVENT");
-  };function $i(a) {
+  };function aj(a) {
     function b() {
       a.b = sd(800).then(r(a.vc, a)).then(function (b) {
         0 < b.length && w(a.c, function (a) {
@@ -20066,18 +20085,25 @@ __webpack_require__("RJVP");
         "STOP_EVENT" != a.message && b();
       });return a.b;
     }a.b && a.b.cancel("STOP_EVENT");b();
-  };function aj() {
-    if (!bj()) {
+  };function bj() {
+    if (!cj()) {
       if ("Node" == K()) throw new N("internal-error", "The LocalStorage compatibility library was not found.");throw new N("web-storage-unsupported");
-    }this.a = k.localStorage || firebase.INTERNAL.node.localStorage;
-  }function bj() {
-    var a = "Node" == K();a = k.localStorage || a && firebase.INTERNAL.node && firebase.INTERNAL.node.localStorage;if (!a) return !1;try {
+    }this.a = dj() || firebase.INTERNAL.node.localStorage;
+  }function dj() {
+    try {
+      var a = k.localStorage,
+          b = Qf();a && (a.setItem(b, "1"), a.removeItem(b));return a;
+    } catch (c) {
+      return null;
+    }
+  }
+  function cj() {
+    var a = "Node" == K();a = dj() || a && firebase.INTERNAL.node && firebase.INTERNAL.node.localStorage;if (!a) return !1;try {
       return a.setItem("__sak", "1"), a.removeItem("__sak"), !0;
     } catch (b) {
       return !1;
     }
-  }h = aj.prototype;
-  h.get = function (a) {
+  }h = bj.prototype;h.get = function (a) {
     var b = this;return A().then(function () {
       var c = b.a.getItem(a);return Wf(c);
     });
@@ -20089,28 +20115,36 @@ __webpack_require__("RJVP");
     var b = this;return A().then(function () {
       b.a.removeItem(a);
     });
-  };h.ia = function (a) {
+  };
+  h.ia = function (a) {
     k.window && cd(k.window, "storage", a);
   };h.da = function (a) {
     k.window && E(k.window, "storage", a);
-  };function cj() {}h = cj.prototype;h.get = function () {
+  };function ej() {}h = ej.prototype;h.get = function () {
     return A(null);
   };h.set = function () {
     return A();
   };h.X = function () {
     return A();
-  };h.ia = function () {};h.da = function () {};function dj() {
-    if (!ej()) {
+  };h.ia = function () {};h.da = function () {};function fj() {
+    if (!gj()) {
       if ("Node" == K()) throw new N("internal-error", "The SessionStorage compatibility library was not found.");throw new N("web-storage-unsupported");
-    }this.a = k.sessionStorage || firebase.INTERNAL.node.sessionStorage;
-  }function ej() {
-    var a = "Node" == K();a = k.sessionStorage || a && firebase.INTERNAL.node && firebase.INTERNAL.node.sessionStorage;if (!a) return !1;try {
+    }this.a = hj() || firebase.INTERNAL.node.sessionStorage;
+  }function hj() {
+    try {
+      var a = k.sessionStorage,
+          b = Qf();a && (a.setItem(b, "1"), a.removeItem(b));return a;
+    } catch (c) {
+      return null;
+    }
+  }
+  function gj() {
+    var a = "Node" == K();a = hj() || a && firebase.INTERNAL.node && firebase.INTERNAL.node.sessionStorage;if (!a) return !1;try {
       return a.setItem("__sak", "1"), a.removeItem("__sak"), !0;
     } catch (b) {
       return !1;
     }
-  }h = dj.prototype;
-  h.get = function (a) {
+  }h = fj.prototype;h.get = function (a) {
     var b = this;return A().then(function () {
       var c = b.a.getItem(a);return Wf(c);
     });
@@ -20122,16 +20156,17 @@ __webpack_require__("RJVP");
     var b = this;return A().then(function () {
       b.a.removeItem(a);
     });
-  };h.ia = function () {};h.da = function () {};function fj() {
-    var a = {};a.Browser = gj;a.Node = hj;a.ReactNative = ij;this.a = a[K()];
-  }var jj,
-      gj = { C: aj, jb: dj },
-      hj = { C: aj, jb: dj },
-      ij = { C: Ri, jb: cj };var kj = { Hc: "local", NONE: "none", Jc: "session" };function lj(a) {
+  };h.ia = function () {};
+  h.da = function () {};function ij() {
+    var a = {};a.Browser = jj;a.Node = kj;a.ReactNative = lj;this.a = a[K()];
+  }var mj,
+      jj = { C: bj, jb: fj },
+      kj = { C: bj, jb: fj },
+      lj = { C: Si, jb: ej };var nj = { Hc: "local", NONE: "none", Jc: "session" };function oj(a) {
     var b = new N("invalid-persistence-type"),
         c = new N("unsupported-persistence-type");a: {
-      for (d in kj) {
-        if (kj[d] == a) {
+      for (d in nj) {
+        if (nj[d] == a) {
           var d = !0;break a;
         }
       }d = !1;
@@ -20140,99 +20175,99 @@ __webpack_require__("RJVP");
         if ("none" !== a) throw c;break;default:
         if (!Pf() && "none" !== a) throw c;}
   }
-  function mj(a, b, c, d) {
-    this.i = a;this.g = b;this.w = c;this.u = d;this.a = {};jj || (jj = new fj());a = jj;try {
+  function pj(a, b, c, d, e) {
+    this.i = a;this.g = b;this.A = c;this.u = d;this.v = e;this.a = {};mj || (mj = new ij());a = mj;try {
       if (uf()) {
-        Ui || (Ui = new Ti("firebaseLocalStorageDb", "firebaseLocalStorage", "fbase_key", "value", 1));var e = Ui;
-      } else e = new a.a.C();this.l = e;
-    } catch (f) {
-      this.l = new Si(), this.u = !0;
+        Vi || (Vi = new Ui("firebaseLocalStorageDb", "firebaseLocalStorage", "fbase_key", "value", 1));var f = Vi;
+      } else f = new a.a.C();this.l = f;
+    } catch (g) {
+      this.l = new Ti(), this.u = !0;
     }try {
       this.o = new a.a.jb();
-    } catch (f) {
-      this.o = new Si();
-    }this.v = new Si();this.h = r(this.m, this);this.b = {};
-  }var nj;function oj() {
-    nj || (nj = new mj("firebase", ":", !Xf(J()) && Lf() ? !0 : !1, Tf()));return nj;
+    } catch (g) {
+      this.o = new Ti();
+    }this.w = new Ti();this.h = r(this.m, this);this.b = {};
+  }var qj;function rj() {
+    qj || (qj = new pj("firebase", ":", !Xf(J()) && Lf() ? !0 : !1, Tf(), Pf()));return qj;
   }
-  function pj(a, b) {
+  function sj(a, b) {
     switch (b) {case "session":
         return a.o;case "none":
-        return a.v;default:
+        return a.w;default:
         return a.l;}
-  }function qj(a, b, c) {
+  }function tj(a, b, c) {
     return a.i + a.g + b.name + (c ? a.g + c : "");
-  }mj.prototype.get = function (a, b) {
-    return pj(this, a.C).get(qj(this, a, b));
-  };function rj(a, b, c) {
-    c = qj(a, b, c);"local" == b.C && (a.b[c] = null);return pj(a, b.C).X(c);
-  }mj.prototype.set = function (a, b, c) {
-    var d = qj(this, a, c),
+  }pj.prototype.get = function (a, b) {
+    return sj(this, a.C).get(tj(this, a, b));
+  };function uj(a, b, c) {
+    c = tj(a, b, c);"local" == b.C && (a.b[c] = null);return sj(a, b.C).X(c);
+  }pj.prototype.set = function (a, b, c) {
+    var d = tj(this, a, c),
         e = this,
-        f = pj(this, a.C);return f.set(d, b).then(function () {
+        f = sj(this, a.C);return f.set(d, b).then(function () {
       return f.get(d);
     }).then(function (b) {
       "local" == a.C && (e.b[d] = b);
     });
   };
-  function sj(a, b, c, d) {
-    b = qj(a, b, c);"undefined" !== typeof k.localStorage && "function" === typeof k.localStorage.getItem && (a.b[b] = k.localStorage.getItem(b));Sa(a.a) && (pj(a, "local").ia(a.h), a.u || uf() || tj(a));a.a[b] || (a.a[b] = []);a.a[b].push(d);
-  }function uj(a, b, c) {
-    b = qj(a, vj("local"), b);a.a[b] && (Ja(a.a[b], function (a) {
+  function vj(a, b, c, d) {
+    b = tj(a, b, c);a.v && (a.b[b] = k.localStorage.getItem(b));Sa(a.a) && (sj(a, "local").ia(a.h), a.u || uf() || !a.v || wj(a));a.a[b] || (a.a[b] = []);a.a[b].push(d);
+  }function xj(a, b, c) {
+    b = tj(a, yj("local"), b);a.a[b] && (Ja(a.a[b], function (a) {
       return a == c;
-    }), 0 == a.a[b].length && delete a.a[b]);Sa(a.a) && wj(a);
+    }), 0 == a.a[b].length && delete a.a[b]);Sa(a.a) && zj(a);
   }
-  function tj(a) {
-    xj(a);a.f = setInterval(function () {
+  function wj(a) {
+    Aj(a);a.f = setInterval(function () {
       for (var b in a.a) {
         var c = k.localStorage.getItem(b),
             d = a.b[b];c != d && (a.b[b] = c, c = new Qc({ type: "storage", key: b, target: window, oldValue: d, newValue: c, a: !0 }), a.m(c));
       }
     }, 1E3);
-  }function xj(a) {
+  }function Aj(a) {
     a.f && (clearInterval(a.f), a.f = null);
-  }function wj(a) {
-    pj(a, "local").da(a.h);xj(a);
+  }function zj(a) {
+    sj(a, "local").da(a.h);Aj(a);
   }
-  mj.prototype.m = function (a) {
+  pj.prototype.m = function (a) {
     if (a && a.g) {
       var b = a.a.key;if (null == b) for (var c in this.a) {
         var d = this.b[c];"undefined" === typeof d && (d = null);var e = k.localStorage.getItem(c);e !== d && (this.b[c] = e, this.c(c));
       } else if (0 == b.indexOf(this.i + this.g) && this.a[b]) {
-        "undefined" !== typeof a.a.a ? pj(this, "local").da(this.h) : xj(this);if (this.w) if (c = k.localStorage.getItem(b), d = a.a.newValue, d !== c) null !== d ? k.localStorage.setItem(b, d) : k.localStorage.removeItem(b);else if (this.b[b] === d && "undefined" === typeof a.a.a) return;var f = this;
+        "undefined" !== typeof a.a.a ? sj(this, "local").da(this.h) : Aj(this);if (this.A) if (c = k.localStorage.getItem(b), d = a.a.newValue, d !== c) null !== d ? k.localStorage.setItem(b, d) : k.localStorage.removeItem(b);else if (this.b[b] === d && "undefined" === typeof a.a.a) return;var f = this;
         c = function c() {
           if ("undefined" !== typeof a.a.a || f.b[b] !== k.localStorage.getItem(b)) f.b[b] = k.localStorage.getItem(b), f.c(b);
         };y && kb && 10 == kb && k.localStorage.getItem(b) !== a.a.newValue && a.a.newValue !== a.a.oldValue ? setTimeout(c, 10) : c();
       }
     } else w(a, r(this.c, this));
-  };mj.prototype.c = function (a) {
+  };pj.prototype.c = function (a) {
     this.a[a] && w(this.a[a], function (a) {
       a();
     });
-  };function zj(a) {
-    this.a = a;this.b = oj();
-  }var Aj = { name: "authEvent", C: "local" };function Bj(a) {
-    return a.b.get(Aj, a.a).then(function (a) {
+  };function Cj(a) {
+    this.a = a;this.b = rj();
+  }var Dj = { name: "authEvent", C: "local" };function Ej(a) {
+    return a.b.get(Dj, a.a).then(function (a) {
       return xh(a);
     });
-  };function Cj() {
-    this.a = oj();
-  };function Dj(a, b, c, d, e, f, g) {
-    this.u = a;this.i = b;this.l = c;this.m = d || null;this.o = g || null;this.h = b + ":" + c;this.A = new Cj();this.g = new zj(this.h);this.f = null;this.b = [];this.v = e || 500;this.w = f || 2E3;this.a = this.c = null;
-  }function Ej(a) {
+  };function Fj() {
+    this.a = rj();
+  };function Gj(a, b, c, d, e, f, g) {
+    this.u = a;this.i = b;this.l = c;this.m = d || null;this.o = g || null;this.h = b + ":" + c;this.A = new Fj();this.g = new Cj(this.h);this.f = null;this.b = [];this.v = e || 500;this.w = f || 2E3;this.a = this.c = null;
+  }function Hj(a) {
     return new N("invalid-cordova-configuration", a);
-  }h = Dj.prototype;
+  }h = Gj.prototype;
   h.ba = function () {
     return this.xa ? this.xa : this.xa = If().then(function () {
-      if ("function" !== typeof L("universalLinks.subscribe", k)) throw Ej("cordova-universal-links-plugin is not installed");if ("undefined" === typeof L("BuildInfo.packageName", k)) throw Ej("cordova-plugin-buildinfo is not installed");if ("function" !== typeof L("cordova.plugins.browsertab.openUrl", k)) throw Ej("cordova-plugin-browsertab is not installed");if ("function" !== typeof L("cordova.InAppBrowser.open", k)) throw Ej("cordova-plugin-inappbrowser is not installed");
+      if ("function" !== typeof L("universalLinks.subscribe", k)) throw Hj("cordova-universal-links-plugin is not installed");if ("undefined" === typeof L("BuildInfo.packageName", k)) throw Hj("cordova-plugin-buildinfo is not installed");if ("function" !== typeof L("cordova.plugins.browsertab.openUrl", k)) throw Hj("cordova-plugin-browsertab is not installed");if ("function" !== typeof L("cordova.InAppBrowser.open", k)) throw Hj("cordova-plugin-inappbrowser is not installed");
     }, function () {
       throw new N("cordova-not-ready");
     });
-  };function Fj() {
+  };function Ij() {
     for (var a = 20, b = []; 0 < a;) {
       b.push("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.floor(62 * Math.random()))), a--;
     }return b.join("");
-  }function Gj(a) {
+  }function Jj(a) {
     var b = new ie();he(b, a);a = [];var c = 8 * b.g;56 > b.c ? he(b, fe, 56 - b.c) : he(b, fe, b.b - (b.c - 56));for (var d = 63; 56 <= d; d--) {
       b.f[d] = c & 255, c /= 256;
     }ge(b);for (d = c = 0; d < b.i; d++) {
@@ -20259,9 +20294,9 @@ __webpack_require__("RJVP");
         g = null,
         l = null,
         n = null;return this.c = Qb(A().then(function () {
-      vh(b);return Hj(d);
+      vh(b);return Kj(d);
     }).then(function () {
-      return Ij(d, a, b, c);
+      return Lj(d, a, b, c);
     }).then(function () {
       return new z(function (a, b) {
         g = function g() {
@@ -20275,7 +20310,7 @@ __webpack_require__("RJVP");
           ag() && l();
         };e.addEventListener("resume", l, !1);J().toLowerCase().match(/android/) || e.addEventListener("visibilitychange", n, !1);
       }).s(function (a) {
-        return Jj(d).then(function () {
+        return Mj(d).then(function () {
           throw a;
         });
       });
@@ -20283,12 +20318,12 @@ __webpack_require__("RJVP");
       l && e.removeEventListener("resume", l, !1);n && e.removeEventListener("visibilitychange", n, !1);f && f.cancel();g && d.Ja(g);d.c = null;
     });
   };
-  function Ij(a, b, c, d) {
-    var e = Fj(),
+  function Lj(a, b, c, d) {
+    var e = Ij(),
         f = new wh(b, d, null, e, new N("no-auth-event")),
         g = L("BuildInfo.packageName", k);if ("string" !== typeof g) throw new N("invalid-cordova-configuration");var l = L("BuildInfo.displayName", k),
-        n = {};if (J().toLowerCase().match(/iphone|ipad|ipod/)) n.ibi = g;else if (J().toLowerCase().match(/android/)) n.apn = g;else return B(new N("operation-not-supported-in-this-environment"));l && (n.appDisplayName = l);e = Gj(e);n.sessionId = e;var D = Qi(a.u, a.i, a.l, b, c, null, d, a.m, n, a.o);return a.ba().then(function () {
-      var b = a.h;return a.A.a.set(Aj, f.B(), b);
+        n = {};if (J().toLowerCase().match(/iphone|ipad|ipod/)) n.ibi = g;else if (J().toLowerCase().match(/android/)) n.apn = g;else return B(new N("operation-not-supported-in-this-environment"));l && (n.appDisplayName = l);e = Jj(e);n.sessionId = e;var D = Ri(a.u, a.i, a.l, b, c, null, d, a.m, n, a.o);return a.ba().then(function () {
+      var b = a.h;return a.A.a.set(Dj, f.B(), b);
     }).then(function () {
       var b = L("cordova.plugins.browsertab.isAvailable", k);if ("function" !== typeof b) throw new N("invalid-cordova-configuration");var c = null;b(function (b) {
         if (b) {
@@ -20299,42 +20334,42 @@ __webpack_require__("RJVP");
         }
       });
     });
-  }function Kj(a, b) {
+  }function Nj(a, b) {
     for (var c = 0; c < a.b.length; c++) {
       try {
         a.b[c](b);
       } catch (d) {}
     }
-  }function Hj(a) {
+  }function Kj(a) {
     a.f || (a.f = a.ba().then(function () {
       return new z(function (b) {
         function c(d) {
           b(d);a.Ja(c);return !1;
-        }a.ua(c);Lj(a);
+        }a.ua(c);Oj(a);
       });
     }));return a.f;
-  }function Jj(a) {
-    var b = null;return Bj(a.g).then(function (c) {
-      b = c;c = a.g;return rj(c.b, Aj, c.a);
+  }function Mj(a) {
+    var b = null;return Ej(a.g).then(function (c) {
+      b = c;c = a.g;return uj(c.b, Dj, c.a);
     }).then(function () {
       return b;
     });
   }
-  function Lj(a) {
+  function Oj(a) {
     function b(b) {
-      e = !0;f && f.cancel();Jj(a).then(function (c) {
+      e = !0;f && f.cancel();Mj(a).then(function (c) {
         var e = d;if (c && b && b.url) {
           e = null;var f = b.url;var g = De(f),
               l = Ce(g, "link"),
               n = Ce(De(l), "link");g = Ce(g, "deep_link_id");f = Ce(De(g), "link") || g || n || l || f;-1 != f.indexOf("/__/auth/callback") && (e = De(f), e = Wf(Ce(e, "firebaseError") || null), e = (e = "object" === typeof e ? vg(e) : null) ? new wh(c.b, c.c, null, null, e) : new wh(c.b, c.c, f, c.g));e = e || d;
-        }Kj(a, e);
+        }Nj(a, e);
       });
     }var c = L("universalLinks.subscribe", k);if ("function" !== typeof c) throw new N("invalid-cordova-configuration");
     var d = new wh("unknown", null, null, null, new N("no-auth-event")),
         e = !1,
         f = sd(a.v).then(function () {
-      return Jj(a).then(function () {
-        e || Kj(a, d);
+      return Mj(a).then(function () {
+        e || Nj(a, d);
       });
     }),
         g = k.handleOpenURL;k.handleOpenURL = function (a) {
@@ -20346,347 +20381,347 @@ __webpack_require__("RJVP");
     };c(null, b);
   }
   h.ua = function (a) {
-    this.b.push(a);Hj(this).s(function (b) {
+    this.b.push(a);Kj(this).s(function (b) {
       "auth/invalid-cordova-configuration" === b.code && (b = new wh("unknown", null, null, null, new N("no-auth-event")), a(b));
     });
   };h.Ja = function (a) {
     Ja(this.b, function (b) {
       return b == a;
     });
-  };function Mj(a) {
-    this.a = a;this.b = oj();
-  }var Nj = { name: "pendingRedirect", C: "session" };function Oj(a) {
-    return a.b.set(Nj, "pending", a.a);
-  }function Pj(a) {
-    return rj(a.b, Nj, a.a);
-  }function Qj(a) {
-    return a.b.get(Nj, a.a).then(function (a) {
+  };function Pj(a) {
+    this.a = a;this.b = rj();
+  }var Qj = { name: "pendingRedirect", C: "session" };function Rj(a) {
+    return a.b.set(Qj, "pending", a.a);
+  }function Sj(a) {
+    return uj(a.b, Qj, a.a);
+  }function Tj(a) {
+    return a.b.get(Qj, a.a).then(function (a) {
       return "pending" == a;
     });
-  };function Rj(a, b, c) {
-    this.v = a;this.l = b;this.u = c;this.h = [];this.f = !1;this.i = r(this.m, this);this.c = new Sj();this.o = new Tj();this.g = new Mj(this.l + ":" + this.u);this.b = {};this.b.unknown = this.c;this.b.signInViaRedirect = this.c;this.b.linkViaRedirect = this.c;this.b.reauthViaRedirect = this.c;this.b.signInViaPopup = this.o;this.b.linkViaPopup = this.o;this.b.reauthViaPopup = this.o;this.a = Uj(this.v, this.l, this.u, xi);
+  };function Uj(a, b, c) {
+    this.v = a;this.l = b;this.u = c;this.h = [];this.f = !1;this.i = r(this.m, this);this.c = new Vj();this.o = new Wj();this.g = new Pj(this.l + ":" + this.u);this.b = {};this.b.unknown = this.c;this.b.signInViaRedirect = this.c;this.b.linkViaRedirect = this.c;this.b.reauthViaRedirect = this.c;this.b.signInViaPopup = this.o;this.b.linkViaPopup = this.o;this.b.reauthViaPopup = this.o;this.a = Xj(this.v, this.l, this.u, yi);
   }
-  function Uj(a, b, c, d) {
-    var e = firebase.SDK_VERSION || null;return Jf() ? new Dj(a, b, c, e, void 0, void 0, d) : new Ki(a, b, c, e, d);
-  }Rj.prototype.reset = function () {
-    this.f = !1;this.a.Ja(this.i);this.a = Uj(this.v, this.l, this.u);
-  };function Vj(a) {
+  function Xj(a, b, c, d) {
+    var e = firebase.SDK_VERSION || null;return Jf() ? new Gj(a, b, c, e, void 0, void 0, d) : new Li(a, b, c, e, d);
+  }Uj.prototype.reset = function () {
+    this.f = !1;this.a.Ja(this.i);this.a = Xj(this.v, this.l, this.u);
+  };function Yj(a) {
     a.f || (a.f = !0, a.a.ua(a.i));var b = a.a;return a.a.ba().s(function (c) {
       a.a == b && a.reset();throw c;
     });
-  }function Wj(a) {
-    a.a.Cb() && Vj(a).s(function (b) {
-      var c = new wh("unknown", null, null, null, new N("operation-not-supported-in-this-environment"));Xj(b) && a.m(c);
-    });a.a.xb() || Yj(a.c);
+  }function Zj(a) {
+    a.a.Cb() && Yj(a).s(function (b) {
+      var c = new wh("unknown", null, null, null, new N("operation-not-supported-in-this-environment"));ak(b) && a.m(c);
+    });a.a.xb() || bk(a.c);
   }
-  Rj.prototype.subscribe = function (a) {
+  Uj.prototype.subscribe = function (a) {
     Ha(this.h, a) || this.h.push(a);if (!this.f) {
-      var b = this;Qj(this.g).then(function (a) {
-        a ? Pj(b.g).then(function () {
-          Vj(b).s(function (a) {
-            var c = new wh("unknown", null, null, null, new N("operation-not-supported-in-this-environment"));Xj(a) && b.m(c);
+      var b = this;Tj(this.g).then(function (a) {
+        a ? Sj(b.g).then(function () {
+          Yj(b).s(function (a) {
+            var c = new wh("unknown", null, null, null, new N("operation-not-supported-in-this-environment"));ak(a) && b.m(c);
           });
-        }) : Wj(b);
+        }) : Zj(b);
       }).s(function () {
-        Wj(b);
+        Zj(b);
       });
     }
-  };Rj.prototype.unsubscribe = function (a) {
+  };Uj.prototype.unsubscribe = function (a) {
     Ja(this.h, function (b) {
       return b == a;
     });
   };
-  Rj.prototype.m = function (a) {
+  Uj.prototype.m = function (a) {
     if (!a) throw new N("invalid-auth-event");for (var b = !1, c = 0; c < this.h.length; c++) {
       var d = this.h[c];if (d.ob(a.b, a.c)) {
         (b = this.b[a.b]) && b.h(a, d);b = !0;break;
       }
-    }Yj(this.c);return b;
-  };var Zj = new $f(2E3, 1E4),
-      ak = new $f(3E4, 6E4);Rj.prototype.aa = function () {
+    }bk(this.c);return b;
+  };var ck = new $f(2E3, 1E4),
+      dk = new $f(3E4, 6E4);Uj.prototype.aa = function () {
     return this.c.aa();
-  };function bk(a, b, c, d, e, f) {
+  };function ek(a, b, c, d, e, f) {
     return a.a.ub(b, c, d, function () {
       a.f || (a.f = !0, a.a.ua(a.i));
     }, function () {
       a.reset();
     }, e, f);
-  }function Xj(a) {
+  }function ak(a) {
     return a && "auth/cordova-not-ready" == a.code ? !0 : !1;
   }
-  Rj.prototype.Aa = function (a, b, c) {
+  Uj.prototype.Aa = function (a, b, c) {
     var d = this,
-        e;return Oj(this.g).then(function () {
+        e;return Rj(this.g).then(function () {
       return d.a.Aa(a, b, c).s(function (a) {
-        if (Xj(a)) throw new N("operation-not-supported-in-this-environment");e = a;return Pj(d.g).then(function () {
+        if (ak(a)) throw new N("operation-not-supported-in-this-environment");e = a;return Sj(d.g).then(function () {
           throw e;
         });
       }).then(function () {
-        return d.a.Db() ? new z(function () {}) : Pj(d.g).then(function () {
+        return d.a.Db() ? new z(function () {}) : Sj(d.g).then(function () {
           return d.aa();
         }).then(function () {}).s(function () {});
       });
     });
-  };Rj.prototype.Ca = function (a, b, c, d) {
+  };Uj.prototype.Ca = function (a, b, c, d) {
     return this.a.Ca(c, function (c) {
       a.fa(b, null, c, d);
-    }, Zj.get());
-  };var ck = {};
-  function dk(a, b, c) {
-    var d = b + ":" + c;ck[d] || (ck[d] = new Rj(a, b, c));return ck[d];
-  }function Sj() {
+    }, ck.get());
+  };var fk = {};
+  function gk(a, b, c) {
+    var d = b + ":" + c;fk[d] || (fk[d] = new Uj(a, b, c));return fk[d];
+  }function Vj() {
     this.b = null;this.f = [];this.c = [];this.a = null;this.g = !1;
-  }Sj.prototype.reset = function () {
+  }Vj.prototype.reset = function () {
     this.b = null;this.a && (this.a.cancel(), this.a = null);
   };
-  Sj.prototype.h = function (a, b) {
+  Vj.prototype.h = function (a, b) {
     if (!a) return B(new N("invalid-auth-event"));this.reset();this.g = !0;var c = a.b,
         d = a.c,
         e = a.a && "auth/web-storage-unsupported" == a.a.code,
-        f = a.a && "auth/operation-not-supported-in-this-environment" == a.a.code;"unknown" != c || e || f ? a.a ? (ek(this, !0, null, a.a), a = A()) : a = b.va(c, d) ? fk(this, a, b) : B(new N("invalid-auth-event")) : (ek(this, !1, null, null), a = A());return a;
-  };function Yj(a) {
-    a.g || (a.g = !0, ek(a, !1, null, null));
+        f = a.a && "auth/operation-not-supported-in-this-environment" == a.a.code;"unknown" != c || e || f ? a.a ? (hk(this, !0, null, a.a), a = A()) : a = b.va(c, d) ? ik(this, a, b) : B(new N("invalid-auth-event")) : (hk(this, !1, null, null), a = A());return a;
+  };function bk(a) {
+    a.g || (a.g = !0, hk(a, !1, null, null));
   }
-  function fk(a, b, c) {
+  function ik(a, b, c) {
     c = c.va(b.b, b.c);var d = b.f,
         e = b.g,
         f = !!b.b.match(/Redirect$/);return c(d, e).then(function (b) {
-      ek(a, f, b, null);
+      hk(a, f, b, null);
     }).s(function (b) {
-      ek(a, f, null, b);
+      hk(a, f, null, b);
     });
-  }function gk(a, b) {
+  }function jk(a, b) {
     a.b = function () {
       return B(b);
     };if (a.c.length) for (var c = 0; c < a.c.length; c++) {
       a.c[c](b);
     }
-  }function hk(a, b) {
+  }function kk(a, b) {
     a.b = function () {
       return A(b);
     };if (a.f.length) for (var c = 0; c < a.f.length; c++) {
       a.f[c](b);
     }
-  }function ek(a, b, c, d) {
-    b ? d ? gk(a, d) : hk(a, c) : hk(a, { user: null });a.f = [];a.c = [];
+  }function hk(a, b, c, d) {
+    b ? d ? jk(a, d) : kk(a, c) : kk(a, { user: null });a.f = [];a.c = [];
   }
-  Sj.prototype.aa = function () {
+  Vj.prototype.aa = function () {
     var a = this;return new z(function (b, c) {
-      a.b ? a.b().then(b, c) : (a.f.push(b), a.c.push(c), ik(a));
+      a.b ? a.b().then(b, c) : (a.f.push(b), a.c.push(c), lk(a));
     });
-  };function ik(a) {
-    var b = new N("timeout");a.a && a.a.cancel();a.a = sd(ak.get()).then(function () {
-      a.b || ek(a, !0, null, b);
+  };function lk(a) {
+    var b = new N("timeout");a.a && a.a.cancel();a.a = sd(dk.get()).then(function () {
+      a.b || hk(a, !0, null, b);
     });
-  }function Tj() {}Tj.prototype.h = function (a, b) {
+  }function Wj() {}Wj.prototype.h = function (a, b) {
     if (!a) return B(new N("invalid-auth-event"));var c = a.b,
-        d = a.c;a.a ? (b.fa(a.b, null, a.a, a.c), a = A()) : a = b.va(c, d) ? jk(a, b) : B(new N("invalid-auth-event"));return a;
+        d = a.c;a.a ? (b.fa(a.b, null, a.a, a.c), a = A()) : a = b.va(c, d) ? mk(a, b) : B(new N("invalid-auth-event"));return a;
   };
-  function jk(a, b) {
+  function mk(a, b) {
     var c = a.c,
         d = a.b;return b.va(d, c)(a.f, a.g).then(function (a) {
       b.fa(d, a, null, c);
     }).s(function (a) {
       b.fa(d, null, a, c);
     });
-  };function kk(a, b) {
+  };function nk(a, b) {
     this.a = b;M(this, "verificationId", a);
-  }kk.prototype.confirm = function (a) {
+  }nk.prototype.confirm = function (a) {
     a = th(this.verificationId, a);return this.a(a);
-  };function lk(a, b, c, d) {
+  };function ok(a, b, c, d) {
     return new rh(a).Qa(b, c).then(function (a) {
-      return new kk(a, d);
+      return new nk(a, d);
     });
-  };function mk(a, b, c, d, e, f) {
+  };function pk(a, b, c, d, e, f) {
     this.h = a;this.i = b;this.g = c;this.c = d;this.f = e;this.l = !!f;this.b = null;this.a = this.c;if (this.f < this.c) throw Error("Proactive refresh lower bound greater than upper bound!");
-  }mk.prototype.start = function () {
-    this.a = this.c;nk(this, !0);
-  };function ok(a, b) {
+  }pk.prototype.start = function () {
+    this.a = this.c;qk(this, !0);
+  };function rk(a, b) {
     if (b) return a.a = a.c, a.g();b = a.a;a.a *= 2;a.a > a.f && (a.a = a.f);return b;
   }
-  function nk(a, b) {
-    pk(a);a.b = sd(ok(a, b)).then(function () {
+  function qk(a, b) {
+    sk(a);a.b = sd(rk(a, b)).then(function () {
       return a.l ? A() : bg();
     }).then(function () {
       return a.h();
     }).then(function () {
-      nk(a, !0);
+      qk(a, !0);
     }).s(function (b) {
-      a.i(b) && nk(a, !1);
+      a.i(b) && qk(a, !1);
     });
-  }function pk(a) {
-    a.b && (a.b.cancel(), a.b = null);
-  };function qk(a) {
-    this.f = a;this.b = this.a = null;this.c = 0;
-  }qk.prototype.B = function () {
-    return { apiKey: this.f.b, refreshToken: this.a, accessToken: this.b, expirationTime: this.c };
-  };function rk(a, b) {
-    var c = b[_O],
-        d = b.refreshToken;b = sk(b.expiresIn);a.b = c;a.c = b;a.a = d;
   }function sk(a) {
+    a.b && (a.b.cancel(), a.b = null);
+  };function tk(a) {
+    this.f = a;this.b = this.a = null;this.c = 0;
+  }tk.prototype.B = function () {
+    return { apiKey: this.f.b, refreshToken: this.a, accessToken: this.b, expirationTime: this.c };
+  };function uk(a, b) {
+    var c = b[_O],
+        d = b.refreshToken;b = vk(b.expiresIn);a.b = c;a.c = b;a.a = d;
+  }function vk(a) {
     return na() + 1E3 * parseInt(a, 10);
   }
-  function tk(a, b) {
+  function wk(a, b) {
     return Oh(a.f, b).then(function (b) {
-      a.b = b.access_token;a.c = sk(b.expires_in);a.a = b.refresh_token;return { accessToken: a.b, expirationTime: a.c, refreshToken: a.a };
+      a.b = b.access_token;a.c = vk(b.expires_in);a.a = b.refresh_token;return { accessToken: a.b, expirationTime: a.c, refreshToken: a.a };
     }).s(function (b) {
       "auth/user-token-expired" == b.code && (a.a = null);throw b;
     });
-  }qk.prototype.getToken = function (a) {
-    a = !!a;return this.b && !this.a ? B(new N("user-token-expired")) : a || !this.b || na() > this.c - 3E4 ? this.a ? tk(this, { grant_type: "refresh_token", refresh_token: this.a }) : A(null) : A({ accessToken: this.b, expirationTime: this.c, refreshToken: this.a });
-  };function uk(a, b) {
+  }tk.prototype.getToken = function (a) {
+    a = !!a;return this.b && !this.a ? B(new N("user-token-expired")) : a || !this.b || na() > this.c - 3E4 ? this.a ? wk(this, { grant_type: "refresh_token", refresh_token: this.a }) : A(null) : A({ accessToken: this.b, expirationTime: this.c, refreshToken: this.a });
+  };function xk(a, b) {
     this.a = a || null;this.b = b || null;gg(this, { lastSignInTime: cg(b || null), creationTime: cg(a || null) });
-  }function vk(a) {
-    return new uk(a.a, a.b);
-  }uk.prototype.B = function () {
+  }function yk(a) {
+    return new xk(a.a, a.b);
+  }xk.prototype.B = function () {
     return { lastLoginAt: this.b, createdAt: this.a };
-  };function wk(a, b, c, d, e, f) {
+  };function zk(a, b, c, d, e, f) {
     gg(this, { uid: a, displayName: d || null, photoURL: e || null, email: c || null, phoneNumber: f || null, providerId: b });
-  }function xk(a, b) {
+  }function Ak(a, b) {
     C.call(this, a);for (var c in b) {
       this[c] = b[c];
     }
-  }t(xk, C);
-  function yk(a, b, c) {
-    this.A = [];this.G = a.apiKey;this.o = a.appName;this.w = a.authDomain || null;a = firebase.SDK_VERSION ? Of(firebase.SDK_VERSION) : null;this.c = new Ch(this.G, wi(xi), a);this.h = new qk(this.c);zk(this, b[_O]);rk(this.h, b);M(this, "refreshToken", this.h.a);Ak(this, c || {});F.call(this);this.I = !1;this.w && Rf() && (this.a = dk(this.w, this.G, this.o));this.N = [];this.i = null;this.l = Bk(this);this.U = r(this.Ga, this);var d = this;this.ha = null;this.ra = function (a) {
+  }t(Ak, C);
+  function Bk(a, b, c) {
+    this.A = [];this.G = a.apiKey;this.o = a.appName;this.w = a.authDomain || null;a = firebase.SDK_VERSION ? Of(firebase.SDK_VERSION) : null;this.c = new Ch(this.G, xi(yi), a);this.h = new tk(this.c);Ck(this, b[_O]);uk(this.h, b);M(this, "refreshToken", this.h.a);Dk(this, c || {});F.call(this);this.I = !1;this.w && Rf() && (this.a = gk(this.w, this.G, this.o));this.N = [];this.i = null;this.l = Ek(this);this.U = r(this.Ga, this);var d = this;this.ha = null;this.ra = function (a) {
       d.na(a.h);
     };this.W = null;this.R = [];this.qa = function (a) {
-      Ck(d, a.f);
+      Fk(d, a.f);
     };this.V = null;
-  }t(yk, F);yk.prototype.na = function (a) {
+  }t(Bk, F);Bk.prototype.na = function (a) {
     this.ha = a;Ih(this.c, a);
-  };yk.prototype.$ = function () {
+  };Bk.prototype.$ = function () {
     return this.ha;
-  };function Dk(a, b) {
+  };function Gk(a, b) {
     a.W && E(a.W, "languageCodeChanged", a.ra);(a.W = b) && cd(b, "languageCodeChanged", a.ra);
-  }function Ck(a, b) {
+  }function Fk(a, b) {
     a.R = b;Jh(a.c, firebase.SDK_VERSION ? Of(firebase.SDK_VERSION, a.R) : null);
-  }yk.prototype.Ka = function () {
+  }Bk.prototype.Ka = function () {
     return La(this.R);
-  };function Ek(a, b) {
+  };function Hk(a, b) {
     a.V && E(a.V, "frameworkChanged", a.qa);(a.V = b) && cd(b, "frameworkChanged", a.qa);
-  }yk.prototype.Ga = function () {
-    this.l.b && (pk(this.l), this.l.start());
+  }Bk.prototype.Ga = function () {
+    this.l.b && (sk(this.l), this.l.start());
   };
-  function Fk(a) {
+  function Ik(a) {
     try {
       return firebase.app(a.o).auth();
     } catch (b) {
       throw new N("internal-error", "No firebase.auth.Auth instance is available for the Firebase App '" + a.o + "'!");
     }
-  }function Bk(a) {
-    return new mk(function () {
+  }function Ek(a) {
+    return new pk(function () {
       return a.F(!0);
     }, function (a) {
       return a && "auth/network-request-failed" == a.code ? !0 : !1;
     }, function () {
       var b = a.h.c - na() - 3E5;return 0 < b ? b : 0;
     }, 3E4, 96E4, !1);
-  }function Gk(a) {
+  }function Jk(a) {
     a.m || a.l.b || (a.l.start(), E(a, "tokenChanged", a.U), cd(a, "tokenChanged", a.U));
-  }function Hk(a) {
-    E(a, "tokenChanged", a.U);pk(a.l);
+  }function Kk(a) {
+    E(a, "tokenChanged", a.U);sk(a.l);
   }
-  function zk(a, b) {
+  function Ck(a, b) {
     a.pa = b;M(a, "_lat", b);
-  }function Ik(a, b) {
+  }function Lk(a, b) {
     Ja(a.N, function (a) {
       return a == b;
     });
-  }function Jk(a) {
+  }function Mk(a) {
     for (var b = [], c = 0; c < a.N.length; c++) {
       b.push(a.N[c](a));
     }return Ob(b).then(function () {
       return a;
     });
-  }function Kk(a) {
+  }function Nk(a) {
     a.a && !a.I && (a.I = !0, a.a.subscribe(a));
   }
-  function Ak(a, b) {
-    gg(a, { uid: b.uid, displayName: b.displayName || null, photoURL: b.photoURL || null, email: b.email || null, emailVerified: b.emailVerified || !1, phoneNumber: b.phoneNumber || null, isAnonymous: b.isAnonymous || !1, metadata: new uk(b.createdAt, b.lastLoginAt), providerData: [] });
-  }M(yk.prototype, "providerId", "firebase");function Lk() {}function Mk(a) {
+  function Dk(a, b) {
+    gg(a, { uid: b.uid, displayName: b.displayName || null, photoURL: b.photoURL || null, email: b.email || null, emailVerified: b.emailVerified || !1, phoneNumber: b.phoneNumber || null, isAnonymous: b.isAnonymous || !1, metadata: new xk(b.createdAt, b.lastLoginAt), providerData: [] });
+  }M(Bk.prototype, "providerId", "firebase");function Ok() {}function Pk(a) {
     return A().then(function () {
       if (a.m) throw new N("app-deleted");
     });
-  }function Nk(a) {
+  }function Qk(a) {
     return Da(a.providerData, function (a) {
       return a.providerId;
     });
   }
-  function Ok(a, b) {
-    b && (Pk(a, b.providerId), a.providerData.push(b));
-  }function Pk(a, b) {
+  function Rk(a, b) {
+    b && (Sk(a, b.providerId), a.providerData.push(b));
+  }function Sk(a, b) {
     Ja(a.providerData, function (a) {
       return a.providerId == b;
     });
-  }function Qk(a, b, c) {
+  }function Tk(a, b, c) {
     ("uid" != b || c) && a.hasOwnProperty(b) && M(a, b, c);
   }
-  function Rk(a, b) {
-    a != b && (gg(a, { uid: b.uid, displayName: b.displayName, photoURL: b.photoURL, email: b.email, emailVerified: b.emailVerified, phoneNumber: b.phoneNumber, isAnonymous: b.isAnonymous, providerData: [] }), b.metadata ? M(a, "metadata", vk(b.metadata)) : M(a, "metadata", new uk()), w(b.providerData, function (b) {
-      Ok(a, b);
+  function Uk(a, b) {
+    a != b && (gg(a, { uid: b.uid, displayName: b.displayName, photoURL: b.photoURL, email: b.email, emailVerified: b.emailVerified, phoneNumber: b.phoneNumber, isAnonymous: b.isAnonymous, providerData: [] }), b.metadata ? M(a, "metadata", yk(b.metadata)) : M(a, "metadata", new xk()), w(b.providerData, function (b) {
+      Rk(a, b);
     }), a.h = b.h, M(a, "refreshToken", a.h.a));
-  }h = yk.prototype;h.reload = function () {
-    var a = this;return R(this, Mk(this).then(function () {
-      return Sk(a).then(function () {
-        return Jk(a);
-      }).then(Lk);
+  }h = Bk.prototype;h.reload = function () {
+    var a = this;return R(this, Pk(this).then(function () {
+      return Vk(a).then(function () {
+        return Mk(a);
+      }).then(Ok);
     }));
   };
-  function Sk(a) {
+  function Vk(a) {
     return a.F().then(function (b) {
-      var c = a.isAnonymous;return Tk(a, b).then(function () {
-        c || Qk(a, "isAnonymous", !1);return b;
+      var c = a.isAnonymous;return Wk(a, b).then(function () {
+        c || Tk(a, "isAnonymous", !1);return b;
       });
     });
   }h.F = function (a) {
-    var b = this;return R(this, Mk(this).then(function () {
+    var b = this;return R(this, Pk(this).then(function () {
       return b.h.getToken(a);
     }).then(function (a) {
-      if (!a) throw new N("internal-error");a.accessToken != b.pa && (zk(b, a.accessToken), G(b, new xk("tokenChanged")));Qk(b, "refreshToken", a.refreshToken);return a.accessToken;
+      if (!a) throw new N("internal-error");a.accessToken != b.pa && (Ck(b, a.accessToken), G(b, new Ak("tokenChanged")));Tk(b, "refreshToken", a.refreshToken);return a.accessToken;
     }));
   };
   h.getToken = function (a) {
     dg["firebase.User.prototype.getToken is deprecated. Please use firebase.User.prototype.getIdToken instead."] || (dg["firebase.User.prototype.getToken is deprecated. Please use firebase.User.prototype.getIdToken instead."] = !0, "undefined" !== typeof console && "function" === typeof console.warn && console.warn("firebase.User.prototype.getToken is deprecated. Please use firebase.User.prototype.getIdToken instead."));return this.F(a);
   };
-  function Uk(a, b) {
-    b[_O] && a.pa != b[_O] && (rk(a.h, b), G(a, new xk("tokenChanged")), zk(a, b[_O]), Qk(a, "refreshToken", a.h.a));
-  }function Tk(a, b) {
-    return Q(a.c, si, { idToken: b }).then(r(a.gc, a));
+  function Xk(a, b) {
+    b[_O] && a.pa != b[_O] && (uk(a.h, b), G(a, new Ak("tokenChanged")), Ck(a, b[_O]), Tk(a, "refreshToken", a.h.a));
+  }function Wk(a, b) {
+    return Q(a.c, ti, { idToken: b }).then(r(a.gc, a));
   }
   h.gc = function (a) {
-    a = a.users;if (!a || !a.length) throw new N("internal-error");a = a[0];Ak(this, { uid: a.localId, displayName: a.displayName, photoURL: a.photoUrl, email: a.email, emailVerified: !!a.emailVerified, phoneNumber: a.phoneNumber, lastLoginAt: a.lastLoginAt, createdAt: a.createdAt });for (var b = Vk(a), c = 0; c < b.length; c++) {
-      Ok(this, b[c]);
-    }Qk(this, "isAnonymous", !(this.email && a.passwordHash) && !(this.providerData && this.providerData.length));
+    a = a.users;if (!a || !a.length) throw new N("internal-error");a = a[0];Dk(this, { uid: a.localId, displayName: a.displayName, photoURL: a.photoUrl, email: a.email, emailVerified: !!a.emailVerified, phoneNumber: a.phoneNumber, lastLoginAt: a.lastLoginAt, createdAt: a.createdAt });for (var b = Yk(a), c = 0; c < b.length; c++) {
+      Rk(this, b[c]);
+    }Tk(this, "isAnonymous", !(this.email && a.passwordHash) && !(this.providerData && this.providerData.length));
   };
-  function Vk(a) {
+  function Yk(a) {
     return (a = a.providerUserInfo) && a.length ? Da(a, function (a) {
-      return new wk(a.rawId, a.providerId, a.email, a.displayName, a.photoUrl, a.phoneNumber);
+      return new zk(a.rawId, a.providerId, a.email, a.displayName, a.photoUrl, a.phoneNumber);
     }) : [];
   }h.Za = function (a) {
     var b = this,
         c = null;return R(this, a.c(this.c, this.uid).then(function (a) {
-      Uk(b, a);c = Wk(b, a, "reauthenticate");b.i = null;return b.reload();
+      Xk(b, a);c = Zk(b, a, "reauthenticate");b.i = null;return b.reload();
     }).then(function () {
       return c;
     }), !0);
   };h.hc = function (a) {
     return this.Za(a).then(function () {});
   };
-  function Xk(a, b) {
-    return Sk(a).then(function () {
-      if (Ha(Nk(a), b)) return Jk(a).then(function () {
+  function $k(a, b) {
+    return Vk(a).then(function () {
+      if (Ha(Qk(a), b)) return Mk(a).then(function () {
         throw new N("provider-already-linked");
       });
     });
   }h.Xa = function (a) {
     var b = this,
-        c = null;return R(this, Xk(this, a.providerId).then(function () {
+        c = null;return R(this, $k(this, a.providerId).then(function () {
       return b.F();
     }).then(function (c) {
       return a.b(b.c, c);
     }).then(function (a) {
-      c = Wk(b, a, "link");return Yk(b, a);
+      c = Zk(b, a, "link");return al(b, a);
     }).then(function () {
       return c;
     }));
@@ -20696,17 +20731,17 @@ __webpack_require__("RJVP");
     });
   };
   h.$b = function (a, b) {
-    var c = this;return R(this, Xk(this, "phone").then(function () {
-      return lk(Fk(c), a, b, r(c.Xa, c));
+    var c = this;return R(this, $k(this, "phone").then(function () {
+      return ok(Ik(c), a, b, r(c.Xa, c));
     }));
   };h.ic = function (a, b) {
     var c = this;return R(this, A().then(function () {
-      return lk(Fk(c), a, b, r(c.Za, c));
+      return ok(Ik(c), a, b, r(c.Za, c));
     }), !0);
-  };function Wk(a, b, c) {
+  };function Zk(a, b, c) {
     var d = uh(b);b = Mg(b);return hg({ user: a, credential: d, additionalUserInfo: b, operationType: c });
-  }function Yk(a, b) {
-    Uk(a, b);return a.reload().then(function () {
+  }function al(a, b) {
+    Xk(a, b);return a.reload().then(function () {
       return a;
     });
   }
@@ -20714,52 +20749,52 @@ __webpack_require__("RJVP");
     var b = this;return R(this, this.F().then(function (c) {
       return b.c.kb(c, a);
     }).then(function (a) {
-      Uk(b, a);return b.reload();
+      Xk(b, a);return b.reload();
     }));
   };h.zc = function (a) {
     var b = this;return R(this, this.F().then(function (c) {
       return a.b(b.c, c);
     }).then(function (a) {
-      Uk(b, a);return b.reload();
+      Xk(b, a);return b.reload();
     }));
   };h.lb = function (a) {
     var b = this;return R(this, this.F().then(function (c) {
       return b.c.lb(c, a);
     }).then(function (a) {
-      Uk(b, a);return b.reload();
+      Xk(b, a);return b.reload();
     }));
   };
   h.mb = function (a) {
-    if (void 0 === a.displayName && void 0 === a.photoURL) return Mk(this);var b = this;return R(this, this.F().then(function (c) {
+    if (void 0 === a.displayName && void 0 === a.photoURL) return Pk(this);var b = this;return R(this, this.F().then(function (c) {
       return b.c.mb(c, { displayName: a.displayName, photoUrl: a.photoURL });
     }).then(function (a) {
-      Uk(b, a);Qk(b, "displayName", a.displayName || null);Qk(b, "photoURL", a.photoUrl || null);w(b.providerData, function (a) {
+      Xk(b, a);Tk(b, "displayName", a.displayName || null);Tk(b, "photoURL", a.photoUrl || null);w(b.providerData, function (a) {
         "password" === a.providerId && (M(a, "displayName", b.displayName), M(a, "photoURL", b.photoURL));
-      });return Jk(b);
-    }).then(Lk));
+      });return Mk(b);
+    }).then(Ok));
   };
   h.yc = function (a) {
-    var b = this;return R(this, Sk(this).then(function (c) {
-      return Ha(Nk(b), a) ? fi(b.c, c, [a]).then(function (a) {
+    var b = this;return R(this, Vk(this).then(function (c) {
+      return Ha(Qk(b), a) ? fi(b.c, c, [a]).then(function (a) {
         var c = {};w(a.providerUserInfo || [], function (a) {
           c[a.providerId] = !0;
-        });w(Nk(b), function (a) {
-          c[a] || Pk(b, a);
-        });c[rh.PROVIDER_ID] || M(b, "phoneNumber", null);return Jk(b);
-      }) : Jk(b).then(function () {
+        });w(Qk(b), function (a) {
+          c[a] || Sk(b, a);
+        });c[rh.PROVIDER_ID] || M(b, "phoneNumber", null);return Mk(b);
+      }) : Mk(b).then(function () {
         throw new N("no-such-provider");
       });
     }));
   };
   h.delete = function () {
     var a = this;return R(this, this.F().then(function (b) {
-      return Q(a.c, ri, { idToken: b });
+      return Q(a.c, si, { idToken: b });
     }).then(function () {
-      G(a, new xk("userDeleted"));
+      G(a, new Ak("userDeleted"));
     })).then(function () {
       for (var b = 0; b < a.A.length; b++) {
         a.A[b].cancel("app-deleted");
-      }Dk(a, null);Ek(a, null);a.A = [];a.m = !0;Hk(a);M(a, "refreshToken", null);a.a && a.a.unsubscribe(a);
+      }Gk(a, null);Hk(a, null);a.A = [];a.m = !0;Kk(a);M(a, "refreshToken", null);a.a && a.a.unsubscribe(a);
     });
   };
   h.ob = function (a, b) {
@@ -20770,23 +20805,23 @@ __webpack_require__("RJVP");
   h.va = function (a, b) {
     return "linkViaPopup" == a && b == (this.g || null) ? r(this.sb, this) : "reauthViaPopup" == a && b == (this.g || null) ? r(this.tb, this) : "linkViaRedirect" == a && (this.Z || null) == b ? r(this.sb, this) : "reauthViaRedirect" == a && (this.Z || null) == b ? r(this.tb, this) : null;
   };h.ac = function (a) {
-    var b = this;return Zk(this, "linkViaPopup", a, function () {
-      return Xk(b, a.providerId).then(function () {
-        return Jk(b);
+    var b = this;return bl(this, "linkViaPopup", a, function () {
+      return $k(b, a.providerId).then(function () {
+        return Mk(b);
       });
     }, !1);
   };h.jc = function (a) {
-    return Zk(this, "reauthViaPopup", a, function () {
+    return bl(this, "reauthViaPopup", a, function () {
       return A();
     }, !0);
   };
-  function Zk(a, b, c, d, e) {
+  function bl(a, b, c, d, e) {
     if (!Rf()) return B(new N("operation-not-supported-in-this-environment"));if (a.i && !e) return B(a.i);var f = Lg(c.providerId),
         g = Qf(a.uid + ":::"),
-        l = null;(!Tf() || Lf()) && a.w && c.isOAuthProvider && (l = Qi(a.w, a.G, a.o, b, c, null, g, firebase.SDK_VERSION || null));var n = Df(l, f && f.za, f && f.ya);d = d().then(function () {
-      $k(a);if (!e) return a.F().then(function () {});
+        l = null;(!Tf() || Lf()) && a.w && c.isOAuthProvider && (l = Ri(a.w, a.G, a.o, b, c, null, g, firebase.SDK_VERSION || null));var n = Df(l, f && f.za, f && f.ya);d = d().then(function () {
+      cl(a);if (!e) return a.F().then(function () {});
     }).then(function () {
-      return bk(a.a, n, b, c, g, !!l);
+      return ek(a.a, n, b, c, g, !!l);
     }).then(function () {
       return new z(function (c, d) {
         a.fa(b, null, new N("cancelled-popup-request"), a.g || null);
@@ -20798,31 +20833,31 @@ __webpack_require__("RJVP");
       n && Cf(n);throw a;
     });return R(a, d, e);
   }h.bc = function (a) {
-    var b = this;return al(this, "linkViaRedirect", a, function () {
-      return Xk(b, a.providerId);
+    var b = this;return dl(this, "linkViaRedirect", a, function () {
+      return $k(b, a.providerId);
     }, !1);
   };h.kc = function (a) {
-    return al(this, "reauthViaRedirect", a, function () {
+    return dl(this, "reauthViaRedirect", a, function () {
       return A();
     }, !0);
   };
-  function al(a, b, c, d, e) {
+  function dl(a, b, c, d, e) {
     if (!Rf()) return B(new N("operation-not-supported-in-this-environment"));if (a.i && !e) return B(a.i);var f = null,
         g = Qf(a.uid + ":::");d = d().then(function () {
-      $k(a);if (!e) return a.F().then(function () {});
+      cl(a);if (!e) return a.F().then(function () {});
     }).then(function () {
-      a.Z = g;return Jk(a);
+      a.Z = g;return Mk(a);
     }).then(function (b) {
-      a.ca && (b = a.ca, b = b.b.set(bl, a.B(), b.a));return b;
+      a.ca && (b = a.ca, b = b.b.set(el, a.B(), b.a));return b;
     }).then(function () {
       return a.a.Aa(b, c, g);
     }).s(function (b) {
-      f = b;if (a.ca) return cl(a.ca);throw f;
+      f = b;if (a.ca) return fl(a.ca);throw f;
     }).then(function () {
       if (f) throw f;
     });return R(a, d, e);
   }
-  function $k(a) {
+  function cl(a) {
     if (!a.a || !a.I) {
       if (a.a && !a.I) throw new N("internal-error");throw new N("auth-domain-config-required");
     }
@@ -20831,7 +20866,7 @@ __webpack_require__("RJVP");
         e = this.F().then(function (d) {
       return Zg(c.c, { requestUri: a, sessionId: b, idToken: d });
     }).then(function (a) {
-      d = Wk(c, a, "link");return Yk(c, a);
+      d = Zk(c, a, "link");return al(c, a);
     }).then(function () {
       return d;
     });return R(this, e);
@@ -20841,7 +20876,7 @@ __webpack_require__("RJVP");
         e = A().then(function () {
       return Vg($g(c.c, { requestUri: a, sessionId: b }), c.uid);
     }).then(function (a) {
-      d = Wk(c, a, "reauthenticate");Uk(c, a);c.i = null;return c.reload();
+      d = Zk(c, a, "reauthenticate");Xk(c, a);c.i = null;return c.reload();
     }).then(function () {
       return d;
     });return R(this, e, !0);
@@ -20856,12 +20891,12 @@ __webpack_require__("RJVP");
     }).then(function () {}));
   };
   function R(a, b, c) {
-    var d = dl(a, b, c);a.A.push(d);Qb(d, function () {
+    var d = gl(a, b, c);a.A.push(d);Qb(d, function () {
       Ia(a.A, d);
     });return d;
-  }function dl(a, b, c) {
+  }function gl(a, b, c) {
     return a.i && !c ? (b.cancel(), B(a.i)) : b.s(function (b) {
-      !b || "auth/user-disabled" != b.code && "auth/user-token-expired" != b.code || (a.i || G(a, new xk("userInvalidated")), a.i = b);throw b;
+      !b || "auth/user-disabled" != b.code && "auth/user-token-expired" != b.code || (a.i || G(a, new Ak("userInvalidated")), a.i = b);throw b;
     });
   }h.toJSON = function () {
     return this.B();
@@ -20871,113 +20906,113 @@ __webpack_require__("RJVP");
       a.providerData.push(ig(b));
     });return a;
   };
-  function el(a) {
+  function hl(a) {
     if (!a.apiKey) return null;var b = { apiKey: a.apiKey, authDomain: a.authDomain, appName: a.appName },
-        c = {};if (a.stsTokenManager && a.stsTokenManager.accessToken && a.stsTokenManager.expirationTime) c[_O] = a.stsTokenManager.accessToken, c.refreshToken = a.stsTokenManager.refreshToken || null, c.expiresIn = (a.stsTokenManager.expirationTime - na()) / 1E3;else return null;var d = new yk(b, c, a);a.providerData && w(a.providerData, function (a) {
-      a && Ok(d, hg(a));
+        c = {};if (a.stsTokenManager && a.stsTokenManager.accessToken && a.stsTokenManager.expirationTime) c[_O] = a.stsTokenManager.accessToken, c.refreshToken = a.stsTokenManager.refreshToken || null, c.expiresIn = (a.stsTokenManager.expirationTime - na()) / 1E3;else return null;var d = new Bk(b, c, a);a.providerData && w(a.providerData, function (a) {
+      a && Rk(d, hg(a));
     });a.redirectEventId && (d.Z = a.redirectEventId);return d;
   }
-  function fl(a, b, c, d) {
-    var e = new yk(a, b);c && (e.ca = c);d && Ck(e, d);return e.reload().then(function () {
+  function il(a, b, c, d) {
+    var e = new Bk(a, b);c && (e.ca = c);d && Fk(e, d);return e.reload().then(function () {
       return e;
     });
-  };function gl(a) {
-    this.a = a;this.b = oj();
-  }var bl = { name: "redirectUser", C: "session" };function cl(a) {
-    return rj(a.b, bl, a.a);
-  }function hl(a, b) {
-    return a.b.get(bl, a.a).then(function (a) {
-      a && b && (a.authDomain = b);return el(a || {});
+  };function jl(a) {
+    this.a = a;this.b = rj();
+  }var el = { name: "redirectUser", C: "session" };function fl(a) {
+    return uj(a.b, el, a.a);
+  }function kl(a, b) {
+    return a.b.get(el, a.a).then(function (a) {
+      a && b && (a.authDomain = b);return hl(a || {});
     });
-  };function il(a, b) {
-    this.a = a;this.b = b || oj();this.c = null;this.f = jl(this);sj(this.b, vj("local"), this.a, r(this.g, this));
-  }il.prototype.g = function () {
+  };function ll(a, b) {
+    this.a = a;this.b = b || rj();this.c = null;this.f = ml(this);vj(this.b, yj("local"), this.a, r(this.g, this));
+  }ll.prototype.g = function () {
     var a = this,
-        b = vj("local");kl(this, function () {
+        b = yj("local");nl(this, function () {
       return A().then(function () {
         return a.c && "local" != a.c.C ? a.b.get(b, a.a) : null;
       }).then(function (c) {
-        if (c) return ll(a, "local").then(function () {
+        if (c) return ol(a, "local").then(function () {
           a.c = b;
         });
       });
     });
-  };function ll(a, b) {
+  };function ol(a, b) {
     var c = [],
-        d;for (d in kj) {
-      kj[d] !== b && c.push(rj(a.b, vj(kj[d]), a.a));
-    }c.push(rj(a.b, ml, a.a));return Nb(c);
+        d;for (d in nj) {
+      nj[d] !== b && c.push(uj(a.b, yj(nj[d]), a.a));
+    }c.push(uj(a.b, pl, a.a));return Nb(c);
   }
-  function jl(a) {
-    var b = vj("local"),
-        c = vj("session"),
-        d = vj("none");return a.b.get(c, a.a).then(function (e) {
+  function ml(a) {
+    var b = yj("local"),
+        c = yj("session"),
+        d = yj("none");return a.b.get(c, a.a).then(function (e) {
       return e ? c : a.b.get(d, a.a).then(function (c) {
         return c ? d : a.b.get(b, a.a).then(function (c) {
-          return c ? b : a.b.get(ml, a.a).then(function (a) {
-            return a ? vj(a) : b;
+          return c ? b : a.b.get(pl, a.a).then(function (a) {
+            return a ? yj(a) : b;
           });
         });
       });
     }).then(function (b) {
-      a.c = b;return ll(a, b.C);
+      a.c = b;return ol(a, b.C);
     }).s(function () {
       a.c || (a.c = b);
     });
-  }var ml = { name: "persistence", C: "session" };function vj(a) {
+  }var pl = { name: "persistence", C: "session" };function yj(a) {
     return { name: "authUser", C: a };
   }
-  il.prototype.eb = function (a) {
+  ll.prototype.eb = function (a) {
     var b = null,
-        c = this;lj(a);return kl(this, function () {
+        c = this;oj(a);return nl(this, function () {
       return a != c.c.C ? c.b.get(c.c, c.a).then(function (d) {
-        b = d;return ll(c, a);
+        b = d;return ol(c, a);
       }).then(function () {
-        c.c = vj(a);if (b) return c.b.set(c.c, b, c.a);
+        c.c = yj(a);if (b) return c.b.set(c.c, b, c.a);
       }) : A();
     });
-  };function nl(a) {
-    return kl(a, function () {
-      return a.b.set(ml, a.c.C, a.a);
+  };function ql(a) {
+    return nl(a, function () {
+      return a.b.set(pl, a.c.C, a.a);
     });
-  }function ol(a, b) {
-    return kl(a, function () {
+  }function rl(a, b) {
+    return nl(a, function () {
       return a.b.set(a.c, b.B(), a.a);
     });
-  }function pl(a) {
-    return kl(a, function () {
-      return rj(a.b, a.c, a.a);
+  }function sl(a) {
+    return nl(a, function () {
+      return uj(a.b, a.c, a.a);
     });
   }
-  function ql(a, b) {
-    return kl(a, function () {
+  function tl(a, b) {
+    return nl(a, function () {
       return a.b.get(a.c, a.a).then(function (a) {
-        a && b && (a.authDomain = b);return el(a || {});
+        a && b && (a.authDomain = b);return hl(a || {});
       });
     });
-  }function kl(a, b) {
+  }function nl(a, b) {
     a.f = a.f.then(b, b);return a.f;
-  };function rl(a) {
-    this.l = !1;M(this, "app", a);if (S(this).options && S(this).options.apiKey) a = firebase.SDK_VERSION ? Of(firebase.SDK_VERSION) : null, this.c = new Ch(S(this).options && S(this).options.apiKey, wi(xi), a);else throw new N("invalid-api-key");this.N = [];this.m = [];this.I = [];this.Gb = firebase.INTERNAL.createSubscribe(r(this.Xb, this));this.R = void 0;this.Hb = firebase.INTERNAL.createSubscribe(r(this.Yb, this));sl(this, null);this.h = new il(S(this).options.apiKey + ":" + S(this).name);this.G = new gl(S(this).options.apiKey + ":" + S(this).name);this.U = T(this, tl(this));this.i = T(this, ul(this));this.W = !1;this.ha = r(this.uc, this);this.Ga = r(this.ka, this);this.pa = r(this.Pb, this);this.qa = r(this.Vb, this);this.ra = r(this.Wb, this);vl(this);this.INTERNAL = {};this.INTERNAL["delete"] = r(this.delete, this);this.INTERNAL.logFramework = r(this.cc, this);this.o = 0;F.call(this);wl(this);this.A = [];
-  }t(rl, F);function xl(a) {
+  };function ul(a) {
+    this.l = !1;M(this, "app", a);if (S(this).options && S(this).options.apiKey) a = firebase.SDK_VERSION ? Of(firebase.SDK_VERSION) : null, this.c = new Ch(S(this).options && S(this).options.apiKey, xi(yi), a);else throw new N("invalid-api-key");this.N = [];this.m = [];this.I = [];this.Gb = firebase.INTERNAL.createSubscribe(r(this.Xb, this));this.R = void 0;this.Hb = firebase.INTERNAL.createSubscribe(r(this.Yb, this));vl(this, null);this.h = new ll(S(this).options.apiKey + ":" + S(this).name);this.G = new jl(S(this).options.apiKey + ":" + S(this).name);this.U = T(this, wl(this));this.i = T(this, xl(this));this.W = !1;this.ha = r(this.uc, this);this.Ga = r(this.ka, this);this.pa = r(this.Pb, this);this.qa = r(this.Vb, this);this.ra = r(this.Wb, this);yl(this);this.INTERNAL = {};this.INTERNAL["delete"] = r(this.delete, this);this.INTERNAL.logFramework = r(this.cc, this);this.o = 0;F.call(this);zl(this);this.A = [];
+  }t(ul, F);function Al(a) {
     C.call(this, "languageCodeChanged");this.h = a;
-  }t(xl, C);function yl(a) {
+  }t(Al, C);function Bl(a) {
     C.call(this, "frameworkChanged");this.f = a;
-  }t(yl, C);h = rl.prototype;
+  }t(Bl, C);h = ul.prototype;
   h.eb = function (a) {
     a = this.h.eb(a);return T(this, a);
   };h.na = function (a) {
-    this.V === a || this.l || (this.V = a, Ih(this.c, this.V), G(this, new xl(this.$())));
+    this.V === a || this.l || (this.V = a, Ih(this.c, this.V), G(this, new Al(this.$())));
   };h.$ = function () {
     return this.V;
   };h.Ac = function () {
     var a = k.navigator;this.na(a ? a.languages && a.languages[0] || a.language || a.userLanguage || null : null);
   };h.cc = function (a) {
-    this.A.push(a);Jh(this.c, firebase.SDK_VERSION ? Of(firebase.SDK_VERSION, this.A) : null);G(this, new yl(this.A));
+    this.A.push(a);Jh(this.c, firebase.SDK_VERSION ? Of(firebase.SDK_VERSION, this.A) : null);G(this, new Bl(this.A));
   };h.Ka = function () {
     return La(this.A);
   };
-  function wl(a) {
+  function zl(a) {
     Object.defineProperty(a, "lc", { get: function get() {
         return this.$();
       }, set: function set(a) {
@@ -20985,15 +21020,15 @@ __webpack_require__("RJVP");
       }, enumerable: !1 });a.V = null;
   }h.toJSON = function () {
     return { apiKey: S(this).options.apiKey, authDomain: S(this).options.authDomain, appName: S(this).name, currentUser: U(this) && U(this).B() };
-  };function zl(a) {
+  };function Cl(a) {
     return a.Fb || B(new N("auth-domain-config-required"));
   }
-  function vl(a) {
+  function yl(a) {
     var b = S(a).options.authDomain,
         c = S(a).options.apiKey;b && Rf() && (a.Fb = a.U.then(function () {
       if (!a.l) {
-        a.a = dk(b, c, S(a).name);a.a.subscribe(a);U(a) && Kk(U(a));if (a.w) {
-          Kk(a.w);var d = a.w;d.na(a.$());Dk(d, a);d = a.w;Ck(d, a.A);Ek(d, a);a.w = null;
+        a.a = gk(b, c, S(a).name);a.a.subscribe(a);U(a) && Nk(U(a));if (a.w) {
+          Nk(a.w);var d = a.w;d.na(a.$());Gk(d, a);d = a.w;Fk(d, a.A);Hk(d, a);a.w = null;
         }return a.a;
       }
     }));
@@ -21016,7 +21051,7 @@ __webpack_require__("RJVP");
     });a = c.U.then(function () {
       return f;
     }).then(function (a) {
-      return Al(c, a);
+      return Dl(c, a);
     }).then(function () {
       return hg({ user: U(c), credential: d, additionalUserInfo: e, operationType: "signIn" });
     });return T(this, a);
@@ -21025,8 +21060,8 @@ __webpack_require__("RJVP");
     if (!Rf()) return B(new N("operation-not-supported-in-this-environment"));var b = this,
         c = Lg(a.providerId),
         d = Qf(),
-        e = null;(!Tf() || Lf()) && S(this).options.authDomain && a.isOAuthProvider && (e = Qi(S(this).options.authDomain, S(this).options.apiKey, S(this).name, "signInViaPopup", a, null, d, firebase.SDK_VERSION || null));var f = Df(e, c && c.za, c && c.ya);c = zl(this).then(function (b) {
-      return bk(b, f, "signInViaPopup", a, d, !!e);
+        e = null;(!Tf() || Lf()) && S(this).options.authDomain && a.isOAuthProvider && (e = Ri(S(this).options.authDomain, S(this).options.apiKey, S(this).name, "signInViaPopup", a, null, d, firebase.SDK_VERSION || null));var f = Df(e, c && c.za, c && c.ya);c = Cl(this).then(function (b) {
+      return ek(b, f, "signInViaPopup", a, d, !!e);
     }).then(function () {
       return new z(function (a, c) {
         b.fa("signInViaPopup", null, new N("cancelled-popup-request"), b.g);b.f = a;b.v = c;b.g = d;b.b = b.a.Ca(b, "signInViaPopup", f, d);
@@ -21038,90 +21073,90 @@ __webpack_require__("RJVP");
     });return T(this, c);
   };h.tc = function (a) {
     if (!Rf()) return B(new N("operation-not-supported-in-this-environment"));var b = this,
-        c = zl(this).then(function () {
-      return nl(b.h);
+        c = Cl(this).then(function () {
+      return ql(b.h);
     }).then(function () {
       return b.a.Aa("signInViaRedirect", a);
     });return T(this, c);
   };
   h.aa = function () {
     if (!Rf()) return B(new N("operation-not-supported-in-this-environment"));var a = this,
-        b = zl(this).then(function () {
+        b = Cl(this).then(function () {
       return a.a.aa();
     }).then(function (a) {
       return a ? hg(a) : null;
     });return T(this, b);
-  };function Al(a, b) {
+  };function Dl(a, b) {
     var c = {};c.apiKey = S(a).options.apiKey;c.authDomain = S(a).options.authDomain;c.appName = S(a).name;return a.U.then(function () {
-      return fl(c, b, a.G, a.Ka());
+      return il(c, b, a.G, a.Ka());
     }).then(function (b) {
-      if (U(a) && b.uid == U(a).uid) return Rk(U(a), b), a.ka(b);sl(a, b);Kk(b);return a.ka(b);
+      if (U(a) && b.uid == U(a).uid) return Uk(U(a), b), a.ka(b);vl(a, b);Nk(b);return a.ka(b);
     }).then(function () {
-      Bl(a);
+      El(a);
     });
   }
-  function sl(a, b) {
-    U(a) && (Ik(U(a), a.Ga), E(U(a), "tokenChanged", a.pa), E(U(a), "userDeleted", a.qa), E(U(a), "userInvalidated", a.ra), Hk(U(a)));b && (b.N.push(a.Ga), cd(b, "tokenChanged", a.pa), cd(b, "userDeleted", a.qa), cd(b, "userInvalidated", a.ra), 0 < a.o && Gk(b));M(a, "currentUser", b);b && (b.na(a.$()), Dk(b, a), Ck(b, a.A), Ek(b, a));
+  function vl(a, b) {
+    U(a) && (Lk(U(a), a.Ga), E(U(a), "tokenChanged", a.pa), E(U(a), "userDeleted", a.qa), E(U(a), "userInvalidated", a.ra), Kk(U(a)));b && (b.N.push(a.Ga), cd(b, "tokenChanged", a.pa), cd(b, "userDeleted", a.qa), cd(b, "userInvalidated", a.ra), 0 < a.o && Jk(b));M(a, "currentUser", b);b && (b.na(a.$()), Gk(b, a), Fk(b, a.A), Hk(b, a));
   }h.hb = function () {
     var a = this,
         b = this.i.then(function () {
-      if (!U(a)) return A();sl(a, null);return pl(a.h).then(function () {
-        Bl(a);
+      if (!U(a)) return A();vl(a, null);return sl(a.h).then(function () {
+        El(a);
       });
     });return T(this, b);
   };
-  function Cl(a) {
-    var b = hl(a.G, S(a).options.authDomain).then(function (b) {
-      if (a.w = b) b.ca = a.G;return cl(a.G);
+  function Fl(a) {
+    var b = kl(a.G, S(a).options.authDomain).then(function (b) {
+      if (a.w = b) b.ca = a.G;return fl(a.G);
     });return T(a, b);
-  }function tl(a) {
+  }function wl(a) {
     var b = S(a).options.authDomain,
-        c = Cl(a).then(function () {
-      return ql(a.h, b);
+        c = Fl(a).then(function () {
+      return tl(a.h, b);
     }).then(function (b) {
       return b ? (b.ca = a.G, a.w && (a.w.Z || null) == (b.Z || null) ? b : b.reload().then(function () {
-        return ol(a.h, b).then(function () {
+        return rl(a.h, b).then(function () {
           return b;
         });
       }).s(function (c) {
-        return "auth/network-request-failed" == c.code ? b : pl(a.h);
+        return "auth/network-request-failed" == c.code ? b : sl(a.h);
       })) : null;
     }).then(function (b) {
-      sl(a, b || null);
+      vl(a, b || null);
     });return T(a, c);
   }
-  function ul(a) {
+  function xl(a) {
     return a.U.then(function () {
       return a.aa();
     }).s(function () {}).then(function () {
       if (!a.l) return a.ha();
     }).s(function () {}).then(function () {
       if (!a.l) {
-        a.W = !0;var b = a.h;sj(b.b, vj("local"), b.a, a.ha);
+        a.W = !0;var b = a.h;vj(b.b, yj("local"), b.a, a.ha);
       }
     });
   }
   h.uc = function () {
-    var a = this;return ql(this.h, S(this).options.authDomain).then(function (b) {
+    var a = this;return tl(this.h, S(this).options.authDomain).then(function (b) {
       if (!a.l) {
         var c;if (c = U(a) && b) {
           c = U(a).uid;var d = b.uid;c = void 0 === c || null === c || "" === c || void 0 === d || null === d || "" === d ? !1 : c == d;
-        }if (c) return Rk(U(a), b), U(a).F();if (U(a) || b) sl(a, b), b && (Kk(b), b.ca = a.G), a.a && a.a.subscribe(a), Bl(a);
+        }if (c) return Uk(U(a), b), U(a).F();if (U(a) || b) vl(a, b), b && (Nk(b), b.ca = a.G), a.a && a.a.subscribe(a), El(a);
       }
     });
   };h.ka = function (a) {
-    return ol(this.h, a);
+    return rl(this.h, a);
   };h.Pb = function () {
-    Bl(this);this.ka(U(this));
+    El(this);this.ka(U(this));
   };h.Vb = function () {
     this.hb();
   };h.Wb = function () {
     this.hb();
   };
-  function Dl(a, b) {
+  function Gl(a, b) {
     var c = null,
         d = null;return T(a, b.then(function (b) {
-      c = uh(b);d = Mg(b);return Al(a, b);
+      c = uh(b);d = Mg(b);return Dl(a, b);
     }).then(function () {
       return hg({ user: U(a), credential: c, additionalUserInfo: d, operationType: "signIn" });
     }));
@@ -21130,7 +21165,7 @@ __webpack_require__("RJVP");
       a.next(U(b));
     });
   };h.Yb = function (a) {
-    var b = this;El(this, function () {
+    var b = this;Hl(this, function () {
       a.next(U(b));
     });
   };h.ec = function (a, b, c) {
@@ -21151,22 +21186,22 @@ __webpack_require__("RJVP");
     });return T(this, c);
   };h.pc = function (a) {
     var b = this;return this.i.then(function () {
-      return Dl(b, Q(b.c, ui, { token: a }));
+      return Gl(b, Q(b.c, vi, { token: a }));
     }).then(function (a) {
-      a = a.user;Qk(a, "isAnonymous", !1);return b.ka(a);
+      a = a.user;Tk(a, "isAnonymous", !1);return b.ka(a);
     }).then(function () {
       return U(b);
     });
   };
   h.qc = function (a, b) {
     var c = this;return this.i.then(function () {
-      return Dl(c, Q(c.c, kh, { email: a, password: b }));
+      return Gl(c, Q(c.c, kh, { email: a, password: b }));
     }).then(function (a) {
       return a.user;
     });
   };h.Kb = function (a, b) {
     var c = this;return this.i.then(function () {
-      return Dl(c, Q(c.c, qi, { email: a, password: b }));
+      return Gl(c, Q(c.c, ri, { email: a, password: b }));
     }).then(function (a) {
       return a.user;
     });
@@ -21176,13 +21211,13 @@ __webpack_require__("RJVP");
     });
   };h.fb = function (a) {
     var b = this;return this.i.then(function () {
-      return Dl(b, a.wa(b.c));
+      return Gl(b, a.wa(b.c));
     });
   };
   h.gb = function () {
     var a = this;return this.i.then(function () {
-      var b = U(a);return b && b.isAnonymous ? b : Dl(a, a.c.gb()).then(function (b) {
-        b = b.user;Qk(b, "isAnonymous", !0);return a.ka(b);
+      var b = U(a);return b && b.isAnonymous ? b : Gl(a, a.c.gb()).then(function (b) {
+        b = b.user;Tk(b, "isAnonymous", !0);return a.ka(b);
       }).then(function () {
         return U(a);
       });
@@ -21193,40 +21228,40 @@ __webpack_require__("RJVP");
     return a.currentUser;
   }h.getUid = function () {
     return U(this) && U(this).uid || null;
-  };function Fl(a) {
+  };function Il(a) {
     return U(a) && U(a)._lat || null;
   }
-  function Bl(a) {
+  function El(a) {
     if (a.W) {
       for (var b = 0; b < a.m.length; b++) {
-        if (a.m[b]) a.m[b](Fl(a));
+        if (a.m[b]) a.m[b](Il(a));
       }if (a.R !== a.getUid() && a.I.length) for (a.R = a.getUid(), b = 0; b < a.I.length; b++) {
-        if (a.I[b]) a.I[b](Fl(a));
+        if (a.I[b]) a.I[b](Il(a));
       }
     }
   }h.Ib = function (a) {
-    this.addAuthTokenListener(a);this.o++;0 < this.o && U(this) && Gk(U(this));
+    this.addAuthTokenListener(a);this.o++;0 < this.o && U(this) && Jk(U(this));
   };h.mc = function (a) {
     var b = this;w(this.m, function (c) {
       c == a && b.o--;
-    });0 > this.o && (this.o = 0);0 == this.o && U(this) && Hk(U(this));this.removeAuthTokenListener(a);
+    });0 > this.o && (this.o = 0);0 == this.o && U(this) && Kk(U(this));this.removeAuthTokenListener(a);
   };
   h.addAuthTokenListener = function (a) {
     var b = this;this.m.push(a);T(this, this.i.then(function () {
-      b.l || Ha(b.m, a) && a(Fl(b));
+      b.l || Ha(b.m, a) && a(Il(b));
     }));
   };h.removeAuthTokenListener = function (a) {
     Ja(this.m, function (b) {
       return b == a;
     });
-  };function El(a, b) {
+  };function Hl(a, b) {
     a.I.push(b);T(a, a.i.then(function () {
-      !a.l && Ha(a.I, b) && a.R !== a.getUid() && (a.R = a.getUid(), b(Fl(a)));
+      !a.l && Ha(a.I, b) && a.R !== a.getUid() && (a.R = a.getUid(), b(Il(a)));
     }));
   }h.delete = function () {
     this.l = !0;for (var a = 0; a < this.N.length; a++) {
       this.N[a].cancel("app-deleted");
-    }this.N = [];this.h && (a = this.h, uj(a.b, a.a, this.ha));this.a && this.a.unsubscribe(this);return firebase.Promise.resolve();
+    }this.N = [];this.h && (a = this.h, xj(a.b, a.a, this.ha));this.a && this.a.unsubscribe(this);return firebase.Promise.resolve();
   };
   function T(a, b) {
     a.N.push(b);Qb(b, function () {
@@ -21254,8 +21289,8 @@ __webpack_require__("RJVP");
       return c.c.cb(a, b);
     }).then(function () {}));
   };h.rc = function (a, b) {
-    return T(this, lk(this, a, b, r(this.fb, this)));
-  };function Gl(a, b, c, d) {
+    return T(this, ok(this, a, b, r(this.fb, this)));
+  };function Jl(a, b, c, d) {
     a: {
       c = Array.prototype.slice.call(c);var e = 0;for (var f = !1, g = 0; g < b.length; g++) {
         if (b[g].optional) f = !0;else {
@@ -21264,45 +21299,45 @@ __webpack_require__("RJVP");
       }f = b.length;if (c.length < e || f < c.length) d = "Expected " + (e == f ? 1 == e ? "1 argument" : e + " arguments" : e + "-" + f + " arguments") + " but got " + c.length + ".";else {
         for (e = 0; e < c.length; e++) {
           if (f = b[e].optional && void 0 === c[e], !b[e].M(c[e]) && !f) {
-            b = b[e];if (0 > e || e >= Hl.length) throw new N("internal-error", "Argument validator received an unsupported number of arguments.");c = Hl[e];d = (d ? "" : c + " argument ") + (b.name ? '"' + b.name + '" ' : "") + "must be " + b.K + ".";break a;
+            b = b[e];if (0 > e || e >= Kl.length) throw new N("internal-error", "Argument validator received an unsupported number of arguments.");c = Kl[e];d = (d ? "" : c + " argument ") + (b.name ? '"' + b.name + '" ' : "") + "must be " + b.K + ".";break a;
           }
         }d = null;
       }
     }if (d) throw new N("argument-error", a + " failed: " + d);
-  }var Hl = "First Second Third Fourth Fifth Sixth Seventh Eighth Ninth".split(" ");function V(a, b) {
+  }var Kl = "First Second Third Fourth Fifth Sixth Seventh Eighth Ninth".split(" ");function V(a, b) {
     return { name: a || "", K: "a valid string", optional: !!b, M: m };
-  }function Il() {
+  }function Ll() {
     return { name: "opt_forceRefresh", K: "a boolean", optional: !0, M: ba };
   }
   function W(a, b) {
     return { name: a || "", K: "a valid object", optional: !!b, M: q };
-  }function Jl(a, b) {
+  }function Ml(a, b) {
     return { name: a || "", K: "a function", optional: !!b, M: p };
-  }function Kl(a, b) {
+  }function Nl(a, b) {
     return { name: a || "", K: "null", optional: !!b, M: ea };
-  }function Ll() {
+  }function Ol() {
     return { name: "", K: "an HTML element", optional: !1, M: function M(a) {
         return !!(a && a instanceof Element);
       } };
-  }function Ml() {
+  }function Pl() {
     return { name: "auth", K: "an instance of Firebase Auth", optional: !0, M: function M(a) {
-        return !!(a && a instanceof rl);
+        return !!(a && a instanceof ul);
       } };
   }
-  function Nl() {
+  function Ql() {
     return { name: "app", K: "an instance of Firebase App", optional: !0, M: function M(a) {
         return !!(a && a instanceof firebase.app.App);
       } };
-  }function Ol(a) {
+  }function Rl(a) {
     return { name: a ? a + "Credential" : "credential", K: a ? "a valid " + a + " credential" : "a valid credential", optional: !1, M: function M(b) {
         if (!b) return !1;var c = !a || b.providerId === a;return !(!b.wa || !c);
       } };
   }
-  function Pl() {
+  function Sl() {
     return { name: "authProvider", K: "a valid Auth provider", optional: !1, M: function M(a) {
         return !!(a && a.providerId && a.hasOwnProperty && a.hasOwnProperty("isOAuthProvider"));
       } };
-  }function Ql() {
+  }function Tl() {
     return { name: "applicationVerifier", K: "an implementation of firebase.auth.ApplicationVerifier", optional: !1, M: function M(a) {
         return !!(a && m(a.type) && p(a.verify));
       } };
@@ -21310,53 +21345,53 @@ __webpack_require__("RJVP");
     return { name: c || "", K: a.K + " or " + b.K, optional: !!d, M: function M(c) {
         return a.M(c) || b.M(c);
       } };
-  };function Rl(a, b, c, d, e, f) {
-    M(this, "type", "recaptcha");this.b = this.c = null;this.m = !1;this.l = b;this.a = c || { theme: "light", type: "image" };this.g = [];if (this.a[Sl]) throw new N("argument-error", "sitekey should not be provided for reCAPTCHA as one is automatically provisioned for the current project.");this.h = "invisible" === this.a[Tl];if (!wc(b) || !this.h && wc(b).hasChildNodes()) throw new N("argument-error", "reCAPTCHA container is either not found or already contains inner elements!");this.u = new Ch(a, f || null, e || null);
+  };function Ul(a, b, c, d, e, f) {
+    M(this, "type", "recaptcha");this.b = this.c = null;this.m = !1;this.l = b;this.a = c || { theme: "light", type: "image" };this.g = [];if (this.a[Vl]) throw new N("argument-error", "sitekey should not be provided for reCAPTCHA as one is automatically provisioned for the current project.");this.h = "invisible" === this.a[Wl];if (!wc(b) || !this.h && wc(b).hasChildNodes()) throw new N("argument-error", "reCAPTCHA container is either not found or already contains inner elements!");this.u = new Ch(a, f || null, e || null);
     this.o = d || function () {
       return null;
-    };var g = this;this.i = [];var l = this.a[Ul];this.a[Ul] = function (a) {
-      Vl(g, a);if ("function" === typeof l) l(a);else if ("string" === typeof l) {
+    };var g = this;this.i = [];var l = this.a[Xl];this.a[Xl] = function (a) {
+      Yl(g, a);if ("function" === typeof l) l(a);else if ("string" === typeof l) {
         var b = L(l, k);"function" === typeof b && b(a);
       }
-    };var n = this.a[Wl];this.a[Wl] = function () {
-      Vl(g, null);if ("function" === typeof n) n();else if ("string" === typeof n) {
+    };var n = this.a[Zl];this.a[Zl] = function () {
+      Yl(g, null);if ("function" === typeof n) n();else if ("string" === typeof n) {
         var a = L(n, k);"function" === typeof a && a();
       }
     };
-  }var Ul = "callback",
-      Wl = "expired-callback",
-      Sl = "sitekey",
-      Tl = "size";function Vl(a, b) {
+  }var Xl = "callback",
+      Zl = "expired-callback",
+      Vl = "sitekey",
+      Wl = "size";function Yl(a, b) {
     for (var c = 0; c < a.i.length; c++) {
       try {
         a.i[c](b);
       } catch (d) {}
     }
   }
-  function Xl(a, b) {
+  function $l(a, b) {
     Ja(a.i, function (a) {
       return a == b;
     });
-  }function Yl(a, b) {
+  }function am(a, b) {
     a.g.push(b);Qb(b, function () {
       Ia(a.g, b);
     });return b;
-  }h = Rl.prototype;
+  }h = Ul.prototype;
   h.xa = function () {
-    var a = this;return this.c ? this.c : this.c = Yl(this, A().then(function () {
+    var a = this;return this.c ? this.c : this.c = am(this, A().then(function () {
       if (Sf()) return Hf();throw new N("operation-not-supported-in-this-environment", "RecaptchaVerifier is only supported in a browser HTTP/HTTPS environment.");
     }).then(function () {
-      return Zl($l(), a.o());
+      return bm(cm(), a.o());
     }).then(function () {
-      return Q(a.u, ti, {});
+      return Q(a.u, ui, {});
     }).then(function (b) {
-      a.a[Sl] = b.recaptchaSiteKey;
+      a.a[Vl] = b.recaptchaSiteKey;
     }).s(function (b) {
       a.c = null;throw b;
     }));
   };
   h.render = function () {
-    am(this);var a = this;return Yl(this, this.xa().then(function () {
+    dm(this);var a = this;return am(this, this.xa().then(function () {
       if (null === a.b) {
         var b = a.l;if (!a.h) {
           var c = wc(b);b = zc("DIV");c.appendChild(b);
@@ -21364,33 +21399,33 @@ __webpack_require__("RJVP");
       }return a.b;
     }));
   };h.verify = function () {
-    am(this);var a = this;return Yl(this, this.render().then(function (b) {
+    dm(this);var a = this;return am(this, this.render().then(function (b) {
       return new z(function (c) {
         var d = grecaptcha.getResponse(b);if (d) c(d);else {
           var e = function e(b) {
-            b && (Xl(a, e), c(b));
+            b && ($l(a, e), c(b));
           };a.i.push(e);a.h && grecaptcha.execute(a.b);
         }
       });
     }));
   };h.reset = function () {
-    am(this);null !== this.b && grecaptcha.reset(this.b);
+    dm(this);null !== this.b && grecaptcha.reset(this.b);
   };
-  function am(a) {
+  function dm(a) {
     if (a.m) throw new N("internal-error", "RecaptchaVerifier instance has been destroyed.");
   }h.clear = function () {
-    am(this);this.m = !0;$l().b--;for (var a = 0; a < this.g.length; a++) {
+    dm(this);this.m = !0;cm().b--;for (var a = 0; a < this.g.length; a++) {
       this.g[a].cancel("RecaptchaVerifier instance has been destroyed.");
     }if (!this.h) {
       a = wc(this.l);for (var b; b = a.firstChild;) {
         a.removeChild(b);
       }
     }
-  };var bm = dc("https://www.google.com/recaptcha/api.js?onload=%{onload}&render=explicit&hl=%{hl}");
-  function cm() {
+  };var em = dc("https://www.google.com/recaptcha/api.js?onload=%{onload}&render=explicit&hl=%{hl}");
+  function fm() {
     this.b = k.grecaptcha ? Infinity : 0;this.c = null;this.a = "__rcb" + Math.floor(1E6 * Math.random()).toString();
   }
-  function Zl(a, b) {
+  function bm(a, b) {
     return new z(function (c, d) {
       if (Zf()) {
         if (!k.grecaptcha || b !== a.c && !a.b) {
@@ -21400,16 +21435,16 @@ __webpack_require__("RJVP");
                 b = e(b, c);a.b++;return b;
               };c();
             } else d(new N("internal-error"));delete k[a.a];
-          };var e = hc(bm, { onload: a.a, hl: b || "" });A(kf(e)).s(function () {
+          };var e = hc(em, { onload: a.a, hl: b || "" });A(kf(e)).s(function () {
             d(new N("internal-error", "Unable to load external reCAPTCHA dependencies!"));
           });
         } else c();
       } else d(new N("network-request-failed"));
     });
-  }var dm = null;
-  function $l() {
-    dm || (dm = new cm());return dm;
-  }function em(a, b, c) {
+  }var gm = null;
+  function cm() {
+    gm || (gm = new fm());return gm;
+  }function hm(a, b, c) {
     try {
       this.f = c || firebase.app();
     } catch (f) {
@@ -21417,58 +21452,58 @@ __webpack_require__("RJVP");
     }if (this.f.options && this.f.options.apiKey) c = this.f.options.apiKey;else throw new N("invalid-api-key");var d = this,
         e = null;try {
       e = this.f.auth().Ka();
-    } catch (f) {}e = firebase.SDK_VERSION ? Of(firebase.SDK_VERSION, e) : null;Rl.call(this, c, a, b, function () {
+    } catch (f) {}e = firebase.SDK_VERSION ? Of(firebase.SDK_VERSION, e) : null;Ul.call(this, c, a, b, function () {
       try {
         var a = d.f.auth().$();
       } catch (g) {
         a = null;
       }return a;
-    }, e, wi(xi));
-  }t(em, Rl);function Y(a, b) {
+    }, e, xi(yi));
+  }t(hm, Ul);function Y(a, b) {
     for (var c in b) {
-      var d = b[c].name;a[d] = fm(d, a[c], b[c].j);
+      var d = b[c].name;a[d] = im(d, a[c], b[c].j);
     }
   }function Z(a, b, c, d) {
-    a[b] = fm(b, c, d);
-  }function fm(a, b, c) {
+    a[b] = im(b, c, d);
+  }function im(a, b, c) {
     function d() {
-      var a = Array.prototype.slice.call(arguments);Gl(e, c, a);return b.apply(this, a);
-    }if (!c) return b;var e = gm(a),
+      var a = Array.prototype.slice.call(arguments);Jl(e, c, a);return b.apply(this, a);
+    }if (!c) return b;var e = jm(a),
         f;for (f in b) {
       d[f] = b[f];
     }for (f in b.prototype) {
       d.prototype[f] = b.prototype[f];
     }return d;
-  }function gm(a) {
+  }function jm(a) {
     a = a.split(".");return a[a.length - 1];
-  };Y(rl.prototype, { Sa: { name: "applyActionCode", j: [V("code")] }, Ia: { name: "checkActionCode", j: [V("code")] }, Ta: { name: "confirmPasswordReset", j: [V("code"), V("newPassword")] }, Kb: { name: "createUserWithEmailAndPassword", j: [V("email"), V("password")] }, Nb: { name: "fetchProvidersForEmail", j: [V("email")] }, aa: { name: "getRedirectResult", j: [] }, dc: { name: "onAuthStateChanged", j: [X(W(), Jl(), "nextOrObserver"), Jl("opt_error", !0), Jl("opt_completed", !0)] }, ec: { name: "onIdTokenChanged", j: [X(W(), Jl(), "nextOrObserver"), Jl("opt_error", !0), Jl("opt_completed", !0)] }, cb: { name: "sendPasswordResetEmail", j: [V("email"), X(W("opt_actionCodeSettings", !0), Kl(null, !0), "opt_actionCodeSettings", !0)] }, eb: { name: "setPersistence", j: [V("persistence")] }, fb: { name: "signInAndRetrieveDataWithCredential", j: [Ol()] }, gb: { name: "signInAnonymously", j: [] }, oc: { name: "signInWithCredential", j: [Ol()] }, pc: { name: "signInWithCustomToken", j: [V("token")] }, qc: { name: "signInWithEmailAndPassword", j: [V("email"), V("password")] }, rc: { name: "signInWithPhoneNumber", j: [V("phoneNumber"), Ql()] }, sc: { name: "signInWithPopup", j: [Pl()] }, tc: { name: "signInWithRedirect", j: [Pl()] }, hb: { name: "signOut", j: [] }, toJSON: { name: "toJSON", j: [V(null, !0)] }, Ac: { name: "useDeviceLanguage", j: [] }, Bc: { name: "verifyPasswordResetCode", j: [V("code")] } });(function (a, b) {
+  };Y(ul.prototype, { Sa: { name: "applyActionCode", j: [V("code")] }, Ia: { name: "checkActionCode", j: [V("code")] }, Ta: { name: "confirmPasswordReset", j: [V("code"), V("newPassword")] }, Kb: { name: "createUserWithEmailAndPassword", j: [V("email"), V("password")] }, Nb: { name: "fetchProvidersForEmail", j: [V("email")] }, aa: { name: "getRedirectResult", j: [] }, dc: { name: "onAuthStateChanged", j: [X(W(), Ml(), "nextOrObserver"), Ml("opt_error", !0), Ml("opt_completed", !0)] }, ec: { name: "onIdTokenChanged", j: [X(W(), Ml(), "nextOrObserver"), Ml("opt_error", !0), Ml("opt_completed", !0)] }, cb: { name: "sendPasswordResetEmail", j: [V("email"), X(W("opt_actionCodeSettings", !0), Nl(null, !0), "opt_actionCodeSettings", !0)] }, eb: { name: "setPersistence", j: [V("persistence")] }, fb: { name: "signInAndRetrieveDataWithCredential", j: [Rl()] }, gb: { name: "signInAnonymously", j: [] }, oc: { name: "signInWithCredential", j: [Rl()] }, pc: { name: "signInWithCustomToken", j: [V("token")] }, qc: { name: "signInWithEmailAndPassword", j: [V("email"), V("password")] }, rc: { name: "signInWithPhoneNumber", j: [V("phoneNumber"), Tl()] }, sc: { name: "signInWithPopup", j: [Sl()] }, tc: { name: "signInWithRedirect", j: [Sl()] }, hb: { name: "signOut", j: [] }, toJSON: { name: "toJSON", j: [V(null, !0)] }, Ac: { name: "useDeviceLanguage", j: [] }, Bc: { name: "verifyPasswordResetCode", j: [V("code")] } });(function (a, b) {
     for (var c in b) {
       var d = b[c].name;if (d !== c) {
         var e = b[c].Jb;Object.defineProperty(a, d, { get: function get() {
             return this[c];
           }, set: function set(a) {
-            Gl(d, [e], [a], !0);this[c] = a;
+            Jl(d, [e], [a], !0);this[c] = a;
           }, enumerable: !0 });
       }
     }
-  })(rl.prototype, { lc: { name: "languageCode", Jb: X(V(), Kl(), "languageCode") } });
-  rl.Persistence = kj;rl.Persistence.LOCAL = "local";rl.Persistence.SESSION = "session";rl.Persistence.NONE = "none";
-  Y(yk.prototype, { "delete": { name: "delete", j: [] }, F: { name: "getIdToken", j: [Il()] }, getToken: { name: "getToken", j: [Il()] }, Xa: { name: "linkAndRetrieveDataWithCredential", j: [Ol()] }, Zb: { name: "linkWithCredential", j: [Ol()] }, $b: { name: "linkWithPhoneNumber", j: [V("phoneNumber"), Ql()] }, ac: { name: "linkWithPopup", j: [Pl()] }, bc: { name: "linkWithRedirect", j: [Pl()] }, Za: { name: "reauthenticateAndRetrieveDataWithCredential", j: [Ol()] }, hc: { name: "reauthenticateWithCredential", j: [Ol()] }, ic: { name: "reauthenticateWithPhoneNumber", j: [V("phoneNumber"), Ql()] }, jc: { name: "reauthenticateWithPopup", j: [Pl()] }, kc: { name: "reauthenticateWithRedirect", j: [Pl()] }, reload: { name: "reload", j: [] }, bb: { name: "sendEmailVerification", j: [X(W("opt_actionCodeSettings", !0), Kl(null, !0), "opt_actionCodeSettings", !0)] }, toJSON: { name: "toJSON", j: [V(null, !0)] }, yc: { name: "unlink", j: [V("provider")] }, kb: { name: "updateEmail", j: [V("email")] }, lb: { name: "updatePassword", j: [V("password")] }, zc: { name: "updatePhoneNumber", j: [Ol("phone")] }, mb: { name: "updateProfile", j: [W("profile")] } });
-  Y(z.prototype, { s: { name: "catch" }, then: { name: "then" } });Y(kk.prototype, { confirm: { name: "confirm", j: [V("verificationCode")] } });Z(mh, "credential", function (a, b) {
+  })(ul.prototype, { lc: { name: "languageCode", Jb: X(V(), Nl(), "languageCode") } });
+  ul.Persistence = nj;ul.Persistence.LOCAL = "local";ul.Persistence.SESSION = "session";ul.Persistence.NONE = "none";
+  Y(Bk.prototype, { "delete": { name: "delete", j: [] }, F: { name: "getIdToken", j: [Ll()] }, getToken: { name: "getToken", j: [Ll()] }, Xa: { name: "linkAndRetrieveDataWithCredential", j: [Rl()] }, Zb: { name: "linkWithCredential", j: [Rl()] }, $b: { name: "linkWithPhoneNumber", j: [V("phoneNumber"), Tl()] }, ac: { name: "linkWithPopup", j: [Sl()] }, bc: { name: "linkWithRedirect", j: [Sl()] }, Za: { name: "reauthenticateAndRetrieveDataWithCredential", j: [Rl()] }, hc: { name: "reauthenticateWithCredential", j: [Rl()] }, ic: { name: "reauthenticateWithPhoneNumber", j: [V("phoneNumber"), Tl()] }, jc: { name: "reauthenticateWithPopup", j: [Sl()] }, kc: { name: "reauthenticateWithRedirect", j: [Sl()] }, reload: { name: "reload", j: [] }, bb: { name: "sendEmailVerification", j: [X(W("opt_actionCodeSettings", !0), Nl(null, !0), "opt_actionCodeSettings", !0)] }, toJSON: { name: "toJSON", j: [V(null, !0)] }, yc: { name: "unlink", j: [V("provider")] }, kb: { name: "updateEmail", j: [V("email")] }, lb: { name: "updatePassword", j: [V("password")] }, zc: { name: "updatePhoneNumber", j: [Rl("phone")] }, mb: { name: "updateProfile", j: [W("profile")] } });
+  Y(z.prototype, { s: { name: "catch" }, then: { name: "then" } });Y(nk.prototype, { confirm: { name: "confirm", j: [V("verificationCode")] } });Z(mh, "credential", function (a, b) {
     return new jh(a, b);
   }, [V("email"), V("password")]);Y(bh.prototype, { sa: { name: "addScope", j: [V("scope")] }, Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(bh, "credential", ch, [X(V(), W(), "token")]);Y(dh.prototype, { sa: { name: "addScope", j: [V("scope")] }, Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });
-  Z(dh, "credential", eh, [X(V(), W(), "token")]);Y(fh.prototype, { sa: { name: "addScope", j: [V("scope")] }, Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(fh, "credential", gh, [X(V(), X(W(), Kl()), "idToken"), X(V(), Kl(), "accessToken", !0)]);Y(hh.prototype, { Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(hh, "credential", ih, [X(V(), W(), "token"), V("secret", !0)]);
-  Y(P.prototype, { sa: { name: "addScope", j: [V("scope")] }, credential: { name: "credential", j: [X(V(), Kl(), "idToken", !0), X(V(), Kl(), "accessToken", !0)] }, Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(rh, "credential", th, [V("verificationId"), V("verificationCode")]);Y(rh.prototype, { Qa: { name: "verifyPhoneNumber", j: [V("phoneNumber"), Ql()] } });Y(N.prototype, { toJSON: { name: "toJSON", j: [V(null, !0)] } });Y(zh.prototype, { toJSON: { name: "toJSON", j: [V(null, !0)] } });
-  Y(yh.prototype, { toJSON: { name: "toJSON", j: [V(null, !0)] } });Y(em.prototype, { clear: { name: "clear", j: [] }, render: { name: "render", j: [] }, verify: { name: "verify", j: [] } });
+  Z(dh, "credential", eh, [X(V(), W(), "token")]);Y(fh.prototype, { sa: { name: "addScope", j: [V("scope")] }, Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(fh, "credential", gh, [X(V(), X(W(), Nl()), "idToken"), X(V(), Nl(), "accessToken", !0)]);Y(hh.prototype, { Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(hh, "credential", ih, [X(V(), W(), "token"), V("secret", !0)]);
+  Y(P.prototype, { sa: { name: "addScope", j: [V("scope")] }, credential: { name: "credential", j: [X(V(), Nl(), "idToken", !0), X(V(), Nl(), "accessToken", !0)] }, Ba: { name: "setCustomParameters", j: [W("customOAuthParameters")] } });Z(rh, "credential", th, [V("verificationId"), V("verificationCode")]);Y(rh.prototype, { Qa: { name: "verifyPhoneNumber", j: [V("phoneNumber"), Tl()] } });Y(N.prototype, { toJSON: { name: "toJSON", j: [V(null, !0)] } });Y(zh.prototype, { toJSON: { name: "toJSON", j: [V(null, !0)] } });
+  Y(yh.prototype, { toJSON: { name: "toJSON", j: [V(null, !0)] } });Y(hm.prototype, { clear: { name: "clear", j: [] }, render: { name: "render", j: [] }, verify: { name: "verify", j: [] } });
   (function () {
     if ("undefined" !== typeof firebase && firebase.INTERNAL && firebase.INTERNAL.registerService) {
-      var a = { Auth: rl, Error: N };Z(a, "EmailAuthProvider", mh, []);Z(a, "FacebookAuthProvider", bh, []);Z(a, "GithubAuthProvider", dh, []);Z(a, "GoogleAuthProvider", fh, []);Z(a, "TwitterAuthProvider", hh, []);Z(a, "OAuthProvider", P, [V("providerId")]);Z(a, "PhoneAuthProvider", rh, [Ml()]);Z(a, "RecaptchaVerifier", em, [X(V(), Ll(), "recaptchaContainer"), W("recaptchaParameters", !0), Nl()]);firebase.INTERNAL.registerService("auth", function (a, c) {
-        a = new rl(a);c({ INTERNAL: { getUid: r(a.getUid, a), getToken: r(a.Rb, a), addAuthTokenListener: r(a.Ib, a), removeAuthTokenListener: r(a.mc, a) } });return a;
+      var a = { Auth: ul, Error: N };Z(a, "EmailAuthProvider", mh, []);Z(a, "FacebookAuthProvider", bh, []);Z(a, "GithubAuthProvider", dh, []);Z(a, "GoogleAuthProvider", fh, []);Z(a, "TwitterAuthProvider", hh, []);Z(a, "OAuthProvider", P, [V("providerId")]);Z(a, "PhoneAuthProvider", rh, [Pl()]);Z(a, "RecaptchaVerifier", hm, [X(V(), Ol(), "recaptchaContainer"), W("recaptchaParameters", !0), Ql()]);firebase.INTERNAL.registerService("auth", function (a, c) {
+        a = new ul(a);c({ INTERNAL: { getUid: r(a.getUid, a), getToken: r(a.Rb, a), addAuthTokenListener: r(a.Ib, a), removeAuthTokenListener: r(a.mc, a) } });return a;
       }, a, function (a, c) {
         if ("create" === a) try {
           c.auth();
         } catch (d) {}
-      });firebase.INTERNAL.extendNamespace({ User: yk });
+      });firebase.INTERNAL.extendNamespace({ User: Bk });
     } else throw Error("Cannot find the firebase namespace; be sure to include firebase-app.js before this library.");
   })();
 }).call(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : {});
@@ -21874,7 +21909,7 @@ module.exports = firebase;
 module.exports = function (el, options) {
   options = options || {};
 
-  var elementDocument = el.ownerDocument;
+  var elementDocument = el.ownerDocument || el;
   var basicTabbables = [];
   var orderedTabbables = [];
 
@@ -22077,7 +22112,7 @@ var forceRestClient = function forceRestClient(_forceRestClient) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"icon":"icon__1uxJd","position":"position__1i6qf","summary":"summary__3cJ4a"};
+module.exports = {"icon":"icon__1uxJd","position":"position__1i6qf","summary":"summary__3cJ4a","button":"button__2LT8B"};
 
 /***/ }),
 
@@ -24217,6 +24252,13 @@ var resolveDeferredValueSnapshot = function resolveDeferredValueSnapshot(node, s
 };
 
 //# sourceMappingURL=ServerValues.js.map
+
+/***/ }),
+
+/***/ "aqQ4":
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 
@@ -28348,7 +28390,7 @@ function createFirebaseNamespace() {
         app: app,
         apps: null,
         Promise: Promise,
-        SDK_VERSION: '4.6.1',
+        SDK_VERSION: '4.7.0',
         INTERNAL: {
             registerService: registerService,
             createFirebaseNamespace: createFirebaseNamespace,
@@ -28952,6 +28994,7 @@ var PathIndex = /** @class */function (_super) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+module.exports = {"dark_bg":"dark_bg__3rBMd","mr":"mr__2rEth"};
 
 /***/ }),
 

@@ -11341,44 +11341,44 @@ function header__inherits(subClass, superClass) { if (typeof superClass !== "fun
 
 var _ref = Object(preact_min["h"])(
   preact_material_components_Drawer.TemporaryDrawerHeader,
-  { className: 'mdc-theme--primary-bg' },
-  'Curriculum vitae'
+  { className: "mdc-theme--primary-bg" },
+  "Curriculum vitae"
 );
 
 var _ref2 = Object(preact_min["h"])(
   preact_material_components_List.ItemIcon,
   null,
-  'person'
+  "person"
 );
 
 var header__ref3 = Object(preact_min["h"])(
   preact_material_components_List.ItemIcon,
   null,
-  'build'
+  "build"
 );
 
 var header__ref4 = Object(preact_min["h"])(
   preact_material_components_List.ItemIcon,
   null,
-  'library_books'
+  "library_books"
 );
 
 var _ref5 = Object(preact_min["h"])(
   preact_material_components_List.ItemIcon,
   null,
-  'school'
+  "school"
 );
 
 var _ref6 = Object(preact_min["h"])(
   preact_material_components_List.ItemIcon,
   null,
-  'public'
+  "public"
 );
 
 var _ref7 = Object(preact_min["h"])(
   preact_material_components_Dialog.Header,
   null,
-  'Settings'
+  "Settings"
 );
 
 var _ref8 = Object(preact_min["h"])(
@@ -11386,13 +11386,8 @@ var _ref8 = Object(preact_min["h"])(
   null,
   Object(preact_min["h"])(
     preact_material_components_Dialog.FooterButton,
-    { cancel: true },
-    'Decline'
-  ),
-  Object(preact_min["h"])(
-    preact_material_components_Dialog.FooterButton,
     { accept: true },
-    'okay'
+    "okay"
   )
 );
 
@@ -11416,46 +11411,57 @@ var header_Header = function (_Component) {
     var _this2 = this;
 
     return Object(preact_min["h"])(
-      'div',
+      "div",
       null,
       Object(preact_min["h"])(
         preact_material_components_Toolbar,
-        { className: 'toolbar' },
+        { className: "toolbar" },
         Object(preact_min["h"])(
           preact_material_components_Toolbar.Row,
           null,
           Object(preact_min["h"])(
             preact_material_components_Toolbar.Section,
-            { 'align-start': true },
+            { "align-start": true },
             Object(preact_min["h"])(
               preact_material_components_Toolbar.Icon,
-              { menu: true, onClick: function onClick() {
+              {
+                menu: true,
+                onClick: function onClick() {
                   _this2.drawer.MDComponent.open = true;
-                } },
-              'menu'
+                }
+              },
+              "menu"
             ),
             Object(preact_min["h"])(
               preact_material_components_Toolbar.Title,
-              { className: header_style_default.a.mr, onClick: function onClick() {
-                  route('/');_this2.closeDrawer();
-                } },
-              'Curriculum vitae'
+              {
+                className: header_style_default.a.mr,
+                onClick: function onClick() {
+                  route("/");
+                  _this2.closeDrawer();
+                }
+              },
+              "Curriculum vitae"
             ),
             Object(preact_min["h"])(
               preact_material_components_Toolbar.Icon,
-              { onClick: function onClick() {
+              {
+                onClick: function onClick() {
                   _this2.dialog.MDComponent.show();
-                } },
-              'settings'
+                }
+              },
+              "settings"
             )
           )
         )
       ),
       Object(preact_min["h"])(
         preact_material_components_Drawer.TemporaryDrawer,
-        { ref: function ref(drawer) {
+        {
+          ref: function ref(drawer) {
             _this2.drawer = drawer;
-          } },
+          }
+        },
         _ref,
         Object(preact_min["h"])(
           preact_material_components_Drawer.TemporaryDrawerContent,
@@ -11465,71 +11471,94 @@ var header_Header = function (_Component) {
             null,
             Object(preact_min["h"])(
               preact_material_components_List.LinkItem,
-              { onClick: function onClick() {
-                  route('/');_this2.closeDrawer();
-                } },
+              {
+                onClick: function onClick() {
+                  route("/");
+                  _this2.closeDrawer();
+                }
+              },
               _ref2,
-              'Base Info'
+              "Base Info"
             ),
             Object(preact_min["h"])(
               preact_material_components_List.LinkItem,
-              { onClick: function onClick() {
-                  route('/skills');_this2.closeDrawer();
-                } },
+              {
+                onClick: function onClick() {
+                  route("/skills");
+                  _this2.closeDrawer();
+                }
+              },
               header__ref3,
-              'Skills'
+              "Skills"
             ),
             Object(preact_min["h"])(
               preact_material_components_List.LinkItem,
-              { onClick: function onClick() {
-                  route('/experience');_this2.closeDrawer();
-                } },
+              {
+                onClick: function onClick() {
+                  route("/experience");
+                  _this2.closeDrawer();
+                }
+              },
               header__ref4,
-              'Experience'
+              "Experience"
             ),
             Object(preact_min["h"])(
               preact_material_components_List.LinkItem,
-              { onClick: function onClick() {
-                  route('/education');_this2.closeDrawer();
-                } },
+              {
+                onClick: function onClick() {
+                  route("/education");
+                  _this2.closeDrawer();
+                }
+              },
               _ref5,
-              'Education'
+              "Education"
             ),
             Object(preact_min["h"])(
               preact_material_components_List.LinkItem,
-              { onClick: function onClick() {
-                  route('/events');_this2.closeDrawer();
-                } },
+              {
+                onClick: function onClick() {
+                  route("/events");
+                  _this2.closeDrawer();
+                }
+              },
               _ref6,
-              'Courses, Trainings, Certification'
+              "Courses, Conference"
             )
           )
         )
       ),
       Object(preact_min["h"])(
         preact_material_components_Dialog,
-        { ref: function ref(dialog) {
+        {
+          ref: function ref(dialog) {
             _this2.dialog = dialog;
-          } },
+          }
+        },
         _ref7,
         Object(preact_min["h"])(
           preact_material_components_Dialog.Body,
           null,
           Object(preact_min["h"])(
-            'div',
+            "div",
             null,
-            'Enable dark theme',
-            Object(preact_min["h"])(Switch_Switch, { onClick: function onClick() {
+            Object(preact_min["h"])(
+              "span",
+              { className: header_style_default.a.offsetRight },
+              "Enable dark theme"
+            ),
+            Object(preact_min["h"])(Switch_Switch, {
+              onClick: function onClick() {
                 _this2.setState({
                   darkThemeEnabled: !_this2.state.darkThemeEnabled
                 }, function () {
                   if (_this2.state.darkThemeEnabled) {
-                    document.body.classList.add('mdc-theme--dark');
+                    document.body.classList.add("mdc-theme--dark");
                   } else {
-                    document.body.classList.remove('mdc-theme--dark');
+                    document.body.classList.remove("mdc-theme--dark");
                   }
                 });
-              } })
+              }
+            })
           )
         ),
         _ref8
@@ -12321,12 +12350,12 @@ var base_Base = function (_Component) {
           null,
           Object(preact_min["h"])(
             preact_material_components_LayoutGrid.Cell,
-            { cols: '5' },
-            Object(preact_min["h"])('img', { src: data.image, alt: data.name })
+            { tabletCols: '12', cols: '5' },
+            Object(preact_min["h"])('img', { className: base_style_default.a.photo, src: data.image, alt: data.name })
           ),
           Object(preact_min["h"])(
             preact_material_components_LayoutGrid.Cell,
-            { cols: '7' },
+            { tabletCols: '12', cols: '7' },
             Object(preact_min["h"])(
               'h2',
               null,
@@ -12676,12 +12705,19 @@ function experience__inherits(subClass, superClass) { if (typeof superClass !== 
 
 
 
+
 var experience__ref = Object(preact_min["h"])(Loader, null);
 
 var experience__ref2 = Object(preact_min["h"])(
-  'h1',
-  { 'class': 'text-center mt-5' },
-  'Expirience'
+  "h1",
+  { "class": "text-center mt-5" },
+  "Expirience"
+);
+
+var experience__ref3 = Object(preact_min["h"])(
+  Icon_Icon,
+  null,
+  "date_range"
 );
 
 var experience_Experience = function (_Component) {
@@ -12701,7 +12737,7 @@ var experience_Experience = function (_Component) {
   Experience.prototype.componentDidMount = function componentDidMount() {
     var _this2 = this;
 
-    database.ref('experience').on('value', function (snapshot) {
+    database.ref("experience").on("value", function (snapshot) {
       _this2.setState({
         data: snapshot.val().filter(function (item) {
           return item !== null;
@@ -12712,12 +12748,22 @@ var experience_Experience = function (_Component) {
     });
   };
 
+  Experience.prototype.getAllMonths = function getAllMonths(start, end) {
+    var s = +new Date(start);
+    var e = end === 'present time' ? +new Date() : +new Date(end);
+    var result = (e - s) / 2592000000;
+
+    return result > 12 ? (result.toFixed() / 12 >> 0) + " year(s) " + (result.toFixed() - (result.toFixed() / 12 >> 0) * 12) + " month(s)" : result.toFixed() + " month(s)";
+  };
+
   Experience.prototype.render = function render() {
+    var _this3 = this;
+
     var data = this.state.data;
 
 
     return Object(preact_min["h"])(
-      'section',
+      "section",
       null,
       data === null ? experience__ref : Object(preact_min["h"])(
         preact_material_components_LayoutGrid,
@@ -12729,30 +12775,47 @@ var experience_Experience = function (_Component) {
           data.map(function (item, key) {
             return Object(preact_min["h"])(
               preact_material_components_LayoutGrid.Cell,
-              { cols: '12', phoneCols: 12, tabletCols: 12, key: key },
+              {
+                cols: "12",
+                phoneCols: 12,
+                tabletCols: 12,
+                key: key
+              },
               Object(preact_min["h"])(
-                'div',
-                { 'class': experience_style_default.a.item },
+                "div",
+                { "class": experience_style_default.a.item },
                 Object(preact_min["h"])(
-                  'h2',
+                  "h2",
                   null,
                   item.position
                 ),
                 Object(preact_min["h"])(
-                  'p',
+                  "p",
+                  { className: "date" },
+                  Object(preact_min["h"])(
+                    "span",
+                    null,
+                    experience__ref3,
+                    "  ",
+                    Object(preact_min["h"])(
+                      "span",
+                      null,
+                      item.from,
+                      " - ",
+                      item.to,
+                      ".  ",
+                      _this3.getAllMonths(item.from, item.to)
+                    )
+                  )
+                ),
+                Object(preact_min["h"])(
+                  "p",
                   null,
-                  'Company: ',
+                  "Company: ",
                   item.company
                 ),
                 Object(preact_min["h"])(
-                  'p',
-                  null,
-                  item.from,
-                  ' ',
-                  item.to
-                ),
-                Object(preact_min["h"])(
-                  'p',
+                  "p",
                   null,
                   item.responsibility
                 )
@@ -12791,12 +12854,19 @@ function education__inherits(subClass, superClass) { if (typeof superClass !== "
 
 
 
+
 var education__ref = Object(preact_min["h"])(Loader, null);
 
 var education__ref2 = Object(preact_min["h"])(
   'h1',
   { 'class': 'text-center mt-5' },
   'Education'
+);
+
+var education__ref3 = Object(preact_min["h"])(
+  Icon_Icon,
+  null,
+  'date_range'
 );
 
 var education_Education = function (_Component) {
@@ -12855,8 +12925,17 @@ var education_Education = function (_Component) {
                 ),
                 Object(preact_min["h"])(
                   'p',
-                  null,
-                  item.date
+                  { className: 'date' },
+                  Object(preact_min["h"])(
+                    'span',
+                    null,
+                    education__ref3,
+                    Object(preact_min["h"])(
+                      'span',
+                      null,
+                      item.date
+                    )
+                  )
                 ),
                 Object(preact_min["h"])(
                   'p',
@@ -12904,12 +12983,19 @@ function events__inherits(subClass, superClass) { if (typeof superClass !== "fun
 
 
 
+
 var events__ref = Object(preact_min["h"])(Loader, null);
 
 var events__ref2 = Object(preact_min["h"])(
   'h1',
   { 'class': 'text-center mt-5' },
   'Courses, Trainings, Certification'
+);
+
+var events__ref3 = Object(preact_min["h"])(
+  Icon_Icon,
+  null,
+  'date_range'
 );
 
 var events_Events = function (_Component) {
@@ -12968,8 +13054,17 @@ var events_Events = function (_Component) {
                 ),
                 Object(preact_min["h"])(
                   'p',
-                  null,
-                  item.date
+                  { className: 'date' },
+                  Object(preact_min["h"])(
+                    'span',
+                    null,
+                    events__ref3,
+                    Object(preact_min["h"])(
+                      'span',
+                      null,
+                      item.date
+                    )
+                  )
                 ),
                 Object(preact_min["h"])(
                   'p',
@@ -22112,7 +22207,7 @@ var forceRestClient = function forceRestClient(_forceRestClient) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"icon":"icon__1uxJd","position":"position__1i6qf","summary":"summary__3cJ4a","button":"button__2LT8B"};
+module.exports = {"icon":"icon__1uxJd","position":"position__1i6qf","summary":"summary__3cJ4a","button":"button__2LT8B","photo":"photo__3nEM2"};
 
 /***/ }),
 
@@ -28994,7 +29089,7 @@ var PathIndex = /** @class */function (_super) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"dark_bg":"dark_bg__3rBMd","mr":"mr__2rEth"};
+module.exports = {"dark_bg":"dark_bg__3rBMd","mr":"mr__2rEth","offsetRight":"offsetRight__2b38H"};
 
 /***/ }),
 

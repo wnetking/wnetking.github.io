@@ -1,0 +1,78 @@
+{
+  "base": {
+    "birth": "02 Aug 1992",
+    "desc": "wnetking",
+    "email": "wnetking1@gmail.com",
+    "facebook": "https://www.facebook.com/wnetking",
+    "github": "https://github.com/wnetking",
+    "instagram": "https://www.instagram.com/wnetking/",
+    "lang": "Ukrainian, Russian, English",
+    "name": "Kyrylov Ilya",
+    "nik_name": "wnetking",
+    "skype": "kirilov8881",
+    "status": "Employed",
+    "title": "Front End Developer"
+  },
+  "education": [
+    {
+      "date": "Sept 2008 - Jun 2014",
+      "degree": "specialist Jr. degree",
+      "faculty": "Automatization and information technology. Installation, maintenance and repair of automated traffic control systems in railway transport.",
+      "name": "Mykolaiv College of Transport Infrastructure"
+    },
+    {
+      "date": "Sept 2012 - Jun 2015",
+      "degree": "Bachelor's degree",
+      "faculty": "Technical Cybernetics. Faculty today trains specialists in information and communication technologies, automation and automation, which are in demand in the labor market, meet the requirements of today, are professional, competent, competitive and successful in life.",
+      "name": "Dnepropetrovsk National University of Railway Transport (DIIT) (Dnipro (Dnipropetrovsk))"
+    },
+    {
+      "date": "Sept 2015 - Jun 2016",
+      "degree": "Specialist degree",
+      "faculty": "Technical Cybernetics. In 2016 our faculty celebrated its 50th anniversary. All this time, he is a leader, is committed to ensuring that the time and competitiveness of his graduates, the curriculum, the content and the versatility of the student's years are matched.",
+      "name": "Dnepropetrovsk National University of Railway Transport (DIIT) (Dnipro (Dnipropetrovsk))"
+    }
+  ],
+  "experience": [
+    {
+      "company": "Serpstat",
+      "from": "March 2019",
+      "position": "Frontend Team Lead",
+      "responsibility": "Manage the delivery of the project releases on multiple environments. Expand front-end capabilities to new platforms and technologies. Mentor and advise team in code review, pair programming and more. Collaborate with Product Designers, Product Managers, and other Team Leaders to plan, nurture, and implement an efficient and effective development process. Work on optimization in code base. Personnel selection, certification. Write technical documentation (admin guides), white papers, presentations.",
+      "to": "present time"
+    },
+    {
+      "company": "Serpstat",
+      "from": "Jul 2018",
+      "position": "Middle Frontend developer",
+      "responsibility": "Developing new user-facing features using React.js, Redux, Redux-saga. Building reusable components and front-end libraries for future use Translating designs and wireframes into high quality code. Optimizing components for maximum performance across a vast array of web-capable devices and browsers",
+      "to": "March 2019"
+    },
+    {
+      "company": "Template Monster",
+      "from": "Jun 2016",
+      "position": "Frontend developer",
+      "responsibility": "Creation of adaptive, cross-browser, optimized,easily supported templates for Prestashop in accordance with the design using HTML5, JS, jQuery, SCSS, Bootstrap, Smarty, PHP, Webpack.",
+      "to": "Jul 2018"
+    },
+    {
+      "company": "IQstream",
+      "from": "Sep 2015",
+      "order": 2,
+      "position": "Frontend developer",
+      "responsibility": "Development and support of websites using HTML5, JS technology and SCSS with the COMPASS preprocessor. Creation of cross-browser, easily supported and productive solutions, using a modular approach. Using Pixel Perfect and goofle PageSpeed for quality evaluation",
+      "to": "Jan 2016"
+    },
+    {
+      "company": "IQstream",
+      "from": "Sep 2015",
+      "order": 3,
+      "position": "Junior Frontend developer",
+      "responsibility": "Part-time job. Creating cross-browser, easily supported html templates according to design using HTML5, JS technology and SCSS with the COMPASS preprocessor.",
+      "to": "Jan 2016"
+    }
+  ],
+  "skills": [
+    "html", "css", "js", "reactjs", "git", "webpack", "ts", "redux", "scss", "react-router", "redux-saga", "nodejs", "express", "ssr", "jenkins", "jest", "mocha", "babel", "react-styleguidist", "lerna", "testing-library", "puppeteer", "redmine", "styled-components", "json-rpc", "solid", "websocket", "gitlab", ""
+  ]
+}

@@ -1,0 +1,31 @@
+---
+layout: layouts/base.njk
+---
+<!-- Delete this message, it will also remove the component CSS from the bundle -->
+{%- css %}{% include "public/css/message-box.css" %}{% endcss %}
+<div class="message-box">
+	{% include "components/avatar/avatar.njk" %}
+	<p>
+		Hello! My name is Illia and I am Frontend developer. <br> Mostevly I work
+	with <mark>React</mark> world. Very exsited what awaits us in the future web.  
+	</p>
+	<p>You can get in touch with me:</p>
+	<ul>
+		<li>
+			<a href="mailto:wnetking1@gmail.com">wnetking1@gmail.com</a>
+		</li>
+		<li>
+			<a class="action" href="https://t.me/wnetking">
+				t.me/wnetking
+			</a>
+		</li>
+				<li>
+			<a class="action" href="https://www.linkedin.com/in/wnetking/">
+				linkedin.com/in/wnetking/
+			</a>
+		</li>
+	</ul>
+</div>
+<!-- Stop deleting -->
+
+{{ content | safe }}

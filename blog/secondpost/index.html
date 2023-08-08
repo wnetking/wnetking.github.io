@@ -3,28 +3,178 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Illia Kyrylov | frontend</title>
-		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+		<title>This is my second post with a much longer title.</title>
+		<meta name="description" content="This is a post on My Blog about leveraging agile frameworks.">
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Illia Kyrylov | frontend">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Illia Kyrylov | frontend">
 		
-		<style>/* Message Box */
-.message-box {
-	--color-message-box: #ffc;
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
 
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
 	display: block;
-	background-color: var(--color-message-box);
-	color: var(--color-gray-90);
-	padding: 1em 0.625em; /* 16px 10px /16 */
-}
-.message-box ol {
-	margin-top: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-	.message-box {
-		--color-message-box: #082840;
-	}
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
 }
 * { box-sizing: border-box; }
 /* Defaults */
@@ -339,129 +489,35 @@ h2 + .header-anchor {
 			<nav>
 				<h2 class="visually-hidden">Top level navigation menu</h2>
 				<ul class="nav">
-					<li class="nav-item"><a href="/" aria-current="page">About</a></li>
+					<li class="nav-item"><a href="/">About</a></li>
 					<li class="nav-item"><a href="/blog/">Blog</a></li>
 				</ul>
 			</nav>
 		</header>
 
 		<main id="skip">
-			<!-- Delete this message, it will also remove the component CSS from the bundle -->
-<div class="message-box">
-		<div class="avatar-image">
-    <img
-      width="135" 
-      height="135" 
-      src="/img/avatar.jpg" 
-      alt="Illia Kyrylov"
-    >
-    <img class="avatar-image-flag" width="30" src="/img/ua-flag.svg" alt="Ukraine flag"/>
-  </div>
-	<p>
-		Hello! My name is Illia and I am Frontend developer. <br> Mostevly I work
-	with <mark>React</mark> world. Very exsited what awaits us in the future web.  
-	</p>
-	<p>You can get in touch with me:</p>
-	<ul>
-		<li>
-			<a href="mailto:wnetking1@gmail.com">wnetking1@gmail.com</a>
-		</li>
-		<li>
-			<a class="action" href="https://t.me/wnetking">
-				t.me/wnetking
-			</a>
-		</li>
-				<li>
-			<a class="action" href="https://www.linkedin.com/in/wnetking/">
-				linkedin.com/in/wnetking/
-			</a>
-		</li>
-	</ul>
-</div>
-<!-- Stop deleting -->
+			
+<h1>This is my second post with a much longer title.</h1>
 
-<h2>Skills</h2>
-<p>
-html, css, js, reactjs, git, webpack, ts, redux, scss, react-router,
-redux-saga, nodejs, express, ssr, jenkins, jest, babel, react-styleguidist,
-lerna, testing-library, redmine, styled-components, json-rpc,
-solid
-</p>
+<ul class="post-metadata">
+	<li><time datetime="2018-07-04">04 July 2018</time></li>
+	<li><a href="/tags/number-2/" class="post-tag">number 2</a></li>
+</ul>
 
-<h2 id="Experience">Experience</h2>
-<p>Mostly frontend development and team leading.</p>
+<p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.</p>
+<h2 id="section-header" tabindex="-1">Section Header <a class="header-anchor" href="#section-header">#</a></h2>
+<p><a href="/blog/firstpost/">First post</a>
+<a href="/blog/thirdpost/">Third post</a></p>
+<p>Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.</p>
+<p>Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the digital divide with additional clickthroughs from DevOps. Nanotechnology immersion along the information highway will close the loop on focusing solely on the bottom line.</p>
 
-<h3>
-	Frontend Team Lead<br> 
-	<small style="font-weight: 300;"><i>Serpstat (March 2019 - present time)</i></small>
-</h3>
-<p>
-	Manage the delivery of the project releases on multiple environments. 
-	Expand front-end capabilities to new platforms and technologies. 
-	Mentor and advise team in code review, pair programming and more. 
-	Collaborate with Product Designers, Product Managers, and other 
-	Team Leaders to plan, nurture, and implement an efficient and 
-	effective development process. Work on optimization in code base. 
-	Personnel selection, certification. Write technical 
-	documentation (admin guides), white papers, presentations.
-</p>
-<h3>
-	Middle Frontend developer<br>
-	<small style="font-weight: 300;">
-		<i>Serpstat (Jul 2018 - March 2019)</i>
-	</small>
-</h3>
-<p>
-	Developing new user-facing features using React.js, Redux, 
-	Redux-saga. Building reusable components and front-end 
-	libraries for future use Translating designs and wireframes 
-	into high quality code. Optimizing components for maximum 
-	performance across a vast array of web-capable devices and 
-	browsers.
-</p>
-
-<h3>
-	Frontend developer<br>
-	<small style="font-weight: 300;">
-		<i>Template Monster (Jun 2016 - Jul 2018)</i>
-	</small>
-</h3>
-<p>
-	Creation of adaptive, cross-browser, optimized,easily 
-	supported templates for Prestashop in accordance with 
-	the design using HTML5, JS, jQuery, SCSS, Bootstrap, 
-	Smarty, PHP, Webpack.
-</p>
-
-<h3>
-	Frontend developer <br>
-	<small style="font-weight: 300;">
-		<i>IQstream (Sep 2015 - Jan 2016)</i>
-	</small>
-</h3>
-<p>
-	Development and support of websites using HTML5, JS 
-	technology and SCSS with the COMPASS preprocessor. 
-	Creation of cross-browser, easily supported and 
-	productive solutions, using a modular approach. 
-	Using Pixel Perfect and goofle PageSpeed for quality evaluation.
-</p>
-
-
-<h2>Education</h2>
-<p>
-	I finish university education at <b>Dnipro National University of Railway Transport</b> , 
-	Dnipro, where I received a master degree in engeniring.
-</p>
-
-<div>
-		<a href="#" onclick="window.print();">Download CV PDF</a>
-</div>
+<ul class="links-nextprev"><li>Previous: <a href="/blog/firstpost/">This is my first post.</a></li><li>Next: <a href="/blog/thirdpost/">This is my third post.</a></li>
+</ul>
 
 		</main>
 
 		<footer></footer>
 
-		<!-- Current page: / -->
+		<!-- Current page: /blog/secondpost/ -->
 	</body>
 </html>

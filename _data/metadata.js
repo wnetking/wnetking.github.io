@@ -1,5 +1,5 @@
 module.exports = {
-	title: "Illia Kyrylov | frontend",
+	title: "Illia Kyrylov",
 	url: "https://wnetking.github.io/",
 	language: "en",
 	description: "I am writing about my experiences as a naval navel-gazer.",

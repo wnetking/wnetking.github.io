@@ -7,6 +7,6 @@ This is a draft post
 
 ```tsx
 function test() {
-
+  const test = '';
 }
 ```

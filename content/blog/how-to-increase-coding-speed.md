@@ -49,9 +49,9 @@ For codding, I use VS Code and the best snippets plugin for React is [ES7+ React
 
 ### Custom snippets for VS Code
 
-You need to create json file in `.vscode` with `.code-snippets` extention.
+You need to create json file in <mark>`.vscode`</mark> with <mark>`.code-snippets`</mark> extention.
 
-Example: `my-snippets.code-snippets`
+Example: <mark>`my-snippets.code-snippets`</mark>
 
 ```json
 {
@@ -78,7 +78,7 @@ Example: `my-snippets.code-snippets`
 }
 ```
 
-After this, you can enter in `typescript` file `brc` and push `Tab`.
+After this, you can enter in _`typescript`_ file <mark>`brc`</mark> and push _Tab_.
 You can create any template that you need. For more information, check out the [official documents on snippets](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets).
 
 ## 3. Use AI helper

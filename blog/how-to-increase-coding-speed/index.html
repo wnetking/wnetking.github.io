@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>How to increase your coding speed.</title>
-		<meta name="description" content="This is a post about how to increase coding speed and more ditails about increase methods.">
+		<meta name="description" content="This is a post about how to increase coding speed and more ditails about increase coding speed methods.">
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Illia Kyrylov">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Illia Kyrylov">
 		
@@ -501,9 +501,73 @@ h2 + .header-anchor {
 
 <ul class="post-metadata">
 	<li><time datetime="2023-08-09">09 August 2023</time></li>
-	<li><a href="/tags/dev-speed/" class="post-tag">dev speed</a></li>
 </ul>
 
+<p>Every programers want to be prodactive and write code faster. But speed not always meen prodactive. You can write code slow and be more productive that others. But still, there is always something to work on. In this post I will tell how optimaze routine in your coding.</p>
+<p>By routine I mean create folders, files and basic file content. For example, basic code react component, reducers, controllers, other entitis. It's the easiest part to optimize coding speed 🙂.</p>
+<p>Let's go through step by step:</p>
+<h2 id="1-creating-folder-structure-routine" tabindex="-1">1. Creating folder structure routine <a class="header-anchor" href="#1-creating-folder-structure-routine">#</a></h2>
+<p>Every time that we create module it have some basic folder structure. It's very good, if your and your team have convention about folder structure, its ease to create a template and use it in every new component or module. If your don't have convention - create it.</p>
+<p>Lets consider an example on the following structure:</p>
+<pre><code>├── /Module/
+│   ├── /ui/                # React components.
+│   ├── /redux/
+│   ├───── /reducer/        # Redux reducer. File or folder.
+│   ├───── /saga/           # Redux saga. File or folder.
+|   ├── /hoc/               # HOC for module
+|   ├── /hooks/             # hook for module
+|   ├── /contexts/          # context for module
+│   ├── /utils/             # 
+│   ├── /types/             #
+│   ├── /services/          # Aditional services. IndexDB, some api.
+│   ├── /tests/             # 
+│   ├── /assets/            # Images folder, other assets (not styles)
+│   ├── Module.style.scss   # Style file for module.
+│   ├── Module.tsx          # Main module file, exported by default
+│   ├── index.ts            # Entry point
+│   ├── lazy.ts             # lazy load entry point
+│   └── Readme.md           # 
+</code></pre>
+<p>You can create the following structure in you code base and reuse it in every new component. I recommend some script for this or existed package. If you use vs code, check out extention <a href="https://marketplace.visualstudio.com/items?itemName=Huuums.vscode-fast-folder-structure">Folder Templates</a>, it's the best way to optimaze file structure routine.</p>
+<h2 id="2-basic-code-for-component" tabindex="-1">2. Basic code for component <a class="header-anchor" href="#2-basic-code-for-component">#</a></h2>
+<p>For reduce time of writing base component code you can use snippets. Every IDE have this feature so just use it. It is have some basics for programing lang, you can use some ready snippents (plugins) and of course, you can write it by you self.</p>
+<p>For codding, I use VS Code and the best snippets plugin for React is <a href="https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets">ES7+ React/Redux/React-Native snippets</a>. Just check out <a href="https://github.com/ults-io/vscode-react-javascript-snippets/blob/master/docs/Snippets.md">all list of the snippets</a> that they have. This plugin is really good, but it will not be enough for my case.  In my project, we have some name conventions that do not match the code that ready solutions give, and we have some custom entities, so I decided to write custom snippets for me and my team.</p>
+<h3 id="custom-snippets-for-vs-code" tabindex="-1">Custom snippets for VS Code <a class="header-anchor" href="#custom-snippets-for-vs-code">#</a></h3>
+<p>You need to create json file in <code>.vscode</code> with <code>.code-snippets</code> extention.</p>
+<p>Example: <code>my-snippets.code-snippets</code></p>
+<pre class="language-json" tabindex="0"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"Base React Component"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"scope"</span><span class="token operator">:</span> <span class="token string">"typescript,typescriptreact"</span><span class="token punctuation">,</span>
+    <span class="token property">"prefix"</span><span class="token operator">:</span> <span class="token string">"brc"</span><span class="token punctuation">,</span>
+    <span class="token property">"body"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"import { useTranslation } from 'react-i18next';"</span><span class="token punctuation">,</span>
+      <span class="token string">"import './${TM_FILENAME_BASE}.style.scss';"</span><span class="token punctuation">,</span>
+      <span class="token string">""</span><span class="token punctuation">,</span>
+      <span class="token string">"type ${TM_FILENAME_BASE}Props = {}"</span><span class="token punctuation">,</span>
+      <span class="token string">""</span><span class="token punctuation">,</span>
+      <span class="token string">"export const ${1:${TM_FILENAME_BASE}}: React.FC&lt;${TM_FILENAME_BASE}Props> = ({}) => {"</span><span class="token punctuation">,</span>
+      <span class="token string">"  const { t } = useTranslation('Global');"</span><span class="token punctuation">,</span>
+      <span class="token string">""</span><span class="token punctuation">,</span>
+      <span class="token string">"  return ("</span><span class="token punctuation">,</span>
+      <span class="token string">"    &lt;div>${1:first}&lt;/div>"</span><span class="token punctuation">,</span>
+      <span class="token string">"  );"</span><span class="token punctuation">,</span>
+      <span class="token string">"}"</span><span class="token punctuation">,</span>
+      <span class="token string">""</span><span class="token punctuation">,</span>
+      <span class="token string">"export default ${1:${TM_FILENAME_BASE}}"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>After this, you can enter in <code>typescript</code> file <code>brc</code> and push <code>Tab</code>.
+You can create any template that you need. For more information, check out the <a href="https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets">official documents on snippets</a>.</p>
+<h2 id="3-use-ai-helper" tabindex="-1">3. Use AI helper <a class="header-anchor" href="#3-use-ai-helper">#</a></h2>
+<p>In our day, we have many AI helpers, so just use the ones you like and optimize your time.</p>
+<p>Some of my favorite:</p>
+<ol>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=GitHub.copilot">GitHub Copilot</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode">Tabnine</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=Continue.continue">Continue - Use Code Llama</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-toolsai.vscode-ai">Azure Machine Learning</a></li>
+</ol>
 
 
 		</main>

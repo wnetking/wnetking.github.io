@@ -16,6 +16,71 @@
 		<link href="https://wnetking.github.io/blog/how-to-increase-coding-speed/"/>
 		<updated>2023-08-09T00:00:00Z</updated>
 		<id>https://wnetking.github.io/blog/how-to-increase-coding-speed/</id>
-		<content type="html"></content>
+		<content type="html">&lt;p&gt;Every programers want to be prodactive and write code faster. But speed not always meen prodactive. You can write code slow and be more productive that others. But still, there is always something to work on. In this post I will tell how optimaze routine in your coding.&lt;/p&gt;
+&lt;p&gt;By routine I mean create folders, files and basic file content. For example, basic code react component, reducers, controllers, other entitis. It&#39;s the easiest part to optimize coding speed 🙂.&lt;/p&gt;
+&lt;p&gt;Let&#39;s go through step by step:&lt;/p&gt;
+&lt;h2 id=&quot;1-creating-folder-structure-routine&quot; tabindex=&quot;-1&quot;&gt;1. Creating folder structure routine &lt;a class=&quot;header-anchor&quot; href=&quot;https://wnetking.github.io/blog/how-to-increase-coding-speed/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Every time that we create module it have some basic folder structure. It&#39;s very good, if your and your team have convention about folder structure, its ease to create a template and use it in every new component or module. If your don&#39;t have convention - create it.&lt;/p&gt;
+&lt;p&gt;Lets consider an example on the following structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;├── /Module/
+│   ├── /ui/                # React components.
+│   ├── /redux/
+│   ├───── /reducer/        # Redux reducer. File or folder.
+│   ├───── /saga/           # Redux saga. File or folder.
+|   ├── /hoc/               # HOC for module
+|   ├── /hooks/             # hook for module
+|   ├── /contexts/          # context for module
+│   ├── /utils/             # 
+│   ├── /types/             #
+│   ├── /services/          # Aditional services. IndexDB, some api.
+│   ├── /tests/             # 
+│   ├── /assets/            # Images folder, other assets (not styles)
+│   ├── Module.style.scss   # Style file for module.
+│   ├── Module.tsx          # Main module file, exported by default
+│   ├── index.ts            # Entry point
+│   ├── lazy.ts             # lazy load entry point
+│   └── Readme.md           # 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can create the following structure in you code base and reuse it in every new component. I recommend some script for this or existed package. If you use vs code, check out extention &lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=Huuums.vscode-fast-folder-structure&quot;&gt;Folder Templates&lt;/a&gt;, it&#39;s the best way to optimaze file structure routine.&lt;/p&gt;
+&lt;h2 id=&quot;2-basic-code-for-component&quot; tabindex=&quot;-1&quot;&gt;2. Basic code for component &lt;a class=&quot;header-anchor&quot; href=&quot;https://wnetking.github.io/blog/how-to-increase-coding-speed/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;For reduce time of writing base component code you can use snippets. Every IDE have this feature so just use it. It is have some basics for programing lang, you can use some ready snippents (plugins) and of course, you can write it by you self.&lt;/p&gt;
+&lt;p&gt;For codding, I use VS Code and the best snippets plugin for React is &lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets&quot;&gt;ES7+ React/Redux/React-Native snippets&lt;/a&gt;. Just check out &lt;a href=&quot;https://github.com/ults-io/vscode-react-javascript-snippets/blob/master/docs/Snippets.md&quot;&gt;all list of the snippets&lt;/a&gt; that they have. This plugin is really good, but it will not be enough for my case.  In my project, we have some name conventions that do not match the code that ready solutions give, and we have some custom entities, so I decided to write custom snippets for me and my team.&lt;/p&gt;
+&lt;h3 id=&quot;custom-snippets-for-vs-code&quot; tabindex=&quot;-1&quot;&gt;Custom snippets for VS Code &lt;a class=&quot;header-anchor&quot; href=&quot;https://wnetking.github.io/blog/how-to-increase-coding-speed/&quot;&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;You need to create json file in &lt;code&gt;.vscode&lt;/code&gt; with &lt;code&gt;.code-snippets&lt;/code&gt; extention.&lt;/p&gt;
+&lt;p&gt;Example: &lt;code&gt;my-snippets.code-snippets&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&quot;language-json&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-json&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;token property&quot;&gt;&quot;Base React Component&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token property&quot;&gt;&quot;scope&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;typescript,typescriptreact&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token property&quot;&gt;&quot;prefix&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;brc&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token property&quot;&gt;&quot;body&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;import { useTranslation } from &#39;react-i18next&#39;;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;import &#39;./${TM_FILENAME_BASE}.style.scss&#39;;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;type ${TM_FILENAME_BASE}Props = {}&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;export const ${1:${TM_FILENAME_BASE}}: React.FC&amp;lt;${TM_FILENAME_BASE}Props&gt; = ({}) =&gt; {&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;  const { t } = useTranslation(&#39;Global&#39;);&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;  return (&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;    &amp;lt;div&gt;${1:first}&amp;lt;/div&gt;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;  );&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;}&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token string&quot;&gt;&quot;export default ${1:${TM_FILENAME_BASE}}&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After this, you can enter in &lt;code&gt;typescript&lt;/code&gt; file &lt;code&gt;brc&lt;/code&gt; and push &lt;code&gt;Tab&lt;/code&gt;.
+You can create any template that you need. For more information, check out the &lt;a href=&quot;https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets&quot;&gt;official documents on snippets&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;3-use-ai-helper&quot; tabindex=&quot;-1&quot;&gt;3. Use AI helper &lt;a class=&quot;header-anchor&quot; href=&quot;https://wnetking.github.io/blog/how-to-increase-coding-speed/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;In our day, we have many AI helpers, so just use the ones you like and optimize your time.&lt;/p&gt;
+&lt;p&gt;Some of my favorite:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=GitHub.copilot&quot;&gt;GitHub Copilot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=TabNine.tabnine-vscode&quot;&gt;Tabnine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=Continue.continue&quot;&gt;Continue - Use Code Llama&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=ms-toolsai.vscode-ai&quot;&gt;Azure Machine Learning&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content>
 	</entry>
 </feed>
